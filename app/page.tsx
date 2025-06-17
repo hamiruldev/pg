@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import Image from 'next/image';
 
 const TOKEN = 'Ns-d1nsty5IhoxzzTef6xZY_zrmbZwI5FDq-ai-C';
 
@@ -87,26 +88,93 @@ export default function Home() {
   if (isLoading) {
     return (
       <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
         flexDirection: 'column',
-        gap: '1rem'
+        gap: '1rem',
+        zIndex: 1000,
       }}>
-        <div className="loading-spinner" style={{
-          width: '50px',
-          height: '50px',
-          border: '5px solid #f3f3f3',
-          borderTop: '5px solid #3498db',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }}></div>
-        <p>Redirecting...</p>
+        {/* Desktop Background */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundImage: 'url("/image-loading.png")',
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          filter: 'blur(5px)',
+          opacity: 0.5
+        }} 
+        className="desktop-bg"
+        
+        />
+
+        {/* Mobile Background */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundImage: 'url("/image-loading-mb.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(5px)',
+          opacity: 0.5
+        }}
+        className="mobile-bg"
+        />
+
+        {/* Loading Content */}
+        <div style={{
+          position: 'relative',
+          zIndex: 1,
+          textAlign: 'center',
+          color: '#fff',
+          textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+        }}>
+          <div className="loading-spinner" style={{
+            width: '50px',
+            height: '50px',
+            border: '5px solid rgba(255,255,255,0.3)',
+            borderTop: '5px solid #fff',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto'
+          }}></div>
+          <p style={{ marginTop: '1rem', fontSize: '1.2rem', fontWeight: 'bold' }}>Loading...</p>
+        </div>
+
         <style jsx>{`
           @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+          }
+
+          @media (max-width: 768px) {
+            .desktop-bg {
+              display: none;
+            }
+            .mobile-bg {
+              display: block;
+            }
+          }
+
+          @media (min-width: 769px) {
+            .desktop-bg {
+              display: block;
+            }
+            .mobile-bg {
+              display: none;
+            }
           }
         `}</style>
       </div>
