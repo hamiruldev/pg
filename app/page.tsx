@@ -171,7 +171,7 @@ export default function Home() {
               width: "100%",
               height: "100%",
               backgroundImage: 'url("/image-loading-mb.png")',
-              backgroundSize: "contain",
+              backgroundSize: "cover",
               backgroundPosition: "center",
               filter: "blur(5px)",
               opacity: 0.5
