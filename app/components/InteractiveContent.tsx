@@ -10,6 +10,33 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
   const carouselTrackRef = useRef(null);
   const carouselRef = useRef(null);
 
+  // Update dealer index after page is fully loaded
+  useEffect(() => {
+    if (!pageContent) return;
+
+    // Wait a bit to ensure the page is fully rendered
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch("/api/update-dealer-index", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (response.ok) {
+          console.log("Dealer index updated successfully after page load");
+        } else {
+          console.error("Failed to update dealer index");
+        }
+      } catch (error) {
+        console.error("Error updating dealer index:", error);
+      }
+    }, 2000); // Wait 2 seconds after content loads
+
+    return () => clearTimeout(timer);
+  }, [pageContent]);
+
   // First useEffect for first carousel
   useEffect(() => {
     if (!pageContent) return;

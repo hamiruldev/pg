@@ -30,12 +30,42 @@ export async function getDealerData(): Promise<string> {
     }
 
     const currentIndex = redirectRow.current_index;
-    const nextIndex = (currentIndex + 1) % dealers.length;
-    const selectedDealer = dealers[nextIndex];
+    const selectedDealer = dealers[currentIndex]; // Use current index, don't update yet
 
     if (!selectedDealer['Username PGO']) {
       throw new Error("Selected dealer missing URL.");
     }
+
+    return selectedDealer['Username PGO'];
+  } catch (error) {
+    console.error("Error in getDealerData:", error);
+    throw error;
+  }
+}
+
+export async function updateDealerIndex(): Promise<void> {
+  try {
+    // Step 1: Get dealer list
+    const dealersRes = await fetch(DEALERS_URL, { headers });
+    const dealersData = await dealersRes.json();
+    const dealers = dealersData.list;
+
+    if (!dealers || dealers.length === 0) {
+      throw new Error("No dealers available.");
+    }
+
+    // Step 2: Get current redirect index
+    const indexRes = await fetch(REDIRECT_INDEX_URL, { headers });
+    const indexData = await indexRes.json();
+
+    const redirectRow = indexData.list?.[0];
+
+    if (!redirectRow || typeof redirectRow.current_index !== 'number') {
+      throw new Error("Invalid redirect index.");
+    }
+
+    const currentIndex = redirectRow.current_index;
+    const nextIndex = (currentIndex + 1) % dealers.length;
 
     // Step 3: Update index in NocoDB
     const updateResponse = await fetch(REDIRECT_INDEX_PATCH_URL, {
@@ -51,9 +81,9 @@ export async function getDealerData(): Promise<string> {
       throw new Error("Failed to update index.");
     }
 
-    return selectedDealer['Username PGO'];
+    console.log("Dealer index updated successfully");
   } catch (error) {
-    console.error("Error in getDealerData:", error);
+    console.error("Error in updateDealerIndex:", error);
     throw error;
   }
 }
