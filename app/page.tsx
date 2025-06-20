@@ -1,7 +1,9 @@
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import Image from "next/image";
 import { getDealerData, getPageContent } from "./lib/data";
-import InteractiveContent from "./components/InteractiveContent";
+
+// Lazy load the InteractiveContent component for better performance
+const InteractiveContent = lazy(() => import("./components/InteractiveContent"));
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic';
@@ -89,20 +91,23 @@ function LoadingScreen() {
 
 // Main Server Component
 export default async function Home() {
+  const startTime = Date.now();
+  
   try {
-    // Server-side data fetching
+    // Server-side data fetching - get dealer URL first, then content
     const dealerUrl = await getDealerData();
     const pageContent = await getPageContent(dealerUrl);
     
     // Add timestamp for debugging cache issues
     const timestamp = new Date().toISOString();
+    const loadTime = Date.now() - startTime;
 
     return (
       <Suspense fallback={<LoadingScreen />}>
         <InteractiveContent pageContent={pageContent} />
         {/* Hidden timestamp for debugging */}
-        <div style={{ display: 'none' }} data-timestamp={timestamp}>
-          Last updated: {timestamp}
+        <div style={{ display: 'none' }} data-timestamp={timestamp} data-load-time={loadTime}>
+          Last updated: {timestamp} | Load time: {loadTime}ms
         </div>
       </Suspense>
     );

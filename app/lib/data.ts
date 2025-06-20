@@ -8,26 +8,43 @@ const headers = {
   'Content-Type': 'application/json'
 };
 
+// Create a fetch wrapper with timeout
+const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout = 10000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+      cache: 'no-store' // Disable fetch caching
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+};
+
 export async function getDealerData(): Promise<string> {
   try {
-    // Step 1: Get dealer list
-    const dealersRes = await fetch(DEALERS_URL, { 
-      headers,
-      cache: 'no-store'
-    });
-    const dealersData = await dealersRes.json();
+    // Fetch dealer list and redirect index in parallel for better performance
+    const [dealersRes, indexRes] = await Promise.all([
+      fetchWithTimeout(DEALERS_URL, { headers }),
+      fetchWithTimeout(REDIRECT_INDEX_URL, { headers })
+    ]);
+
+    const [dealersData, indexData] = await Promise.all([
+      dealersRes.json(),
+      indexRes.json()
+    ]);
+
     const dealers = dealersData.list;
 
     if (!dealers || dealers.length === 0) {
       throw new Error("No dealers available.");
     }
-
-    // Step 2: Get current redirect index
-    const indexRes = await fetch(REDIRECT_INDEX_URL, { 
-      headers,
-      cache: 'no-store'
-    });
-    const indexData = await indexRes.json();
 
     const redirectRow = indexData.list?.[0];
 
@@ -51,24 +68,22 @@ export async function getDealerData(): Promise<string> {
 
 export async function updateDealerIndex(): Promise<void> {
   try {
-    // Step 1: Get dealer list
-    const dealersRes = await fetch(DEALERS_URL, { 
-      headers,
-      cache: 'no-store'
-    });
-    const dealersData = await dealersRes.json();
+    // Fetch dealer list and redirect index in parallel
+    const [dealersRes, indexRes] = await Promise.all([
+      fetchWithTimeout(DEALERS_URL, { headers }),
+      fetchWithTimeout(REDIRECT_INDEX_URL, { headers })
+    ]);
+
+    const [dealersData, indexData] = await Promise.all([
+      dealersRes.json(),
+      indexRes.json()
+    ]);
+
     const dealers = dealersData.list;
 
     if (!dealers || dealers.length === 0) {
       throw new Error("No dealers available.");
     }
-
-    // Step 2: Get current redirect index
-    const indexRes = await fetch(REDIRECT_INDEX_URL, { 
-      headers,
-      cache: 'no-store'
-    });
-    const indexData = await indexRes.json();
 
     const redirectRow = indexData.list?.[0];
 
@@ -80,10 +95,9 @@ export async function updateDealerIndex(): Promise<void> {
     const nextIndex = (currentIndex + 1) % dealers.length;
 
     // Step 3: Update index in NocoDB
-    const updateResponse = await fetch(REDIRECT_INDEX_PATCH_URL, {
+    const updateResponse = await fetchWithTimeout(REDIRECT_INDEX_PATCH_URL, {
       method: 'PATCH',
       headers,
-      cache: 'no-store',
       body: JSON.stringify({
         current_index: nextIndex,
         Id: 34,
@@ -107,8 +121,8 @@ export async function getPageContent(url: string): Promise<string> {
       throw new Error("URL is required");
     }
 
-    const response = await fetch(`https://publicgoldofficial.com/page/${url}`, {
-      cache: 'no-store'
+    const response = await fetchWithTimeout(`https://publicgoldofficial.com/page/${url}`, {
+      cache: 'no-store' // Disable fetch caching
     });
     
     if (!response.ok) {

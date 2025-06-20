@@ -5,11 +5,15 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: 'swap',
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -38,6 +42,9 @@ export default function RootLayout({
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <link rel="shortcut icon" href="https://publicgoldofficial.com/favicon.ico" type="image/x-icon" />
         <link rel="icon" href="https://publicgoldofficial.com/favicon.ico" type="image/x-icon" />
+        <link rel="preload" href="https://cdn.tailwindcss.com" as="script" />
+        <link rel="dns-prefetch" href="https://app.nocodb.com" />
+        <link rel="dns-prefetch" href="https://publicgoldofficial.com" />
         <script src="https://cdn.tailwindcss.com"></script>
       </head>
       <body

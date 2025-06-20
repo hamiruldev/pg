@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 
 interface InteractiveContentProps {
   pageContent: string;
@@ -10,32 +10,41 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
   const carouselTrackRef = useRef(null);
   const carouselRef = useRef(null);
 
-  // Update dealer index after page is fully loaded
+  // Memoize the update dealer index function
+  const updateDealerIndex = useCallback(async () => {
+    try {
+      const response = await fetch("/api/update-dealer-index", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (response.ok) {
+        console.log("Dealer index updated successfully after page load");
+      } else {
+        console.error("Failed to update dealer index");
+      }
+    } catch (error) {
+      console.error("Error updating dealer index:", error);
+    }
+  }, []);
+
+  // Update dealer index after page is fully loaded - reduced timeout for faster updates
   useEffect(() => {
     if (!pageContent) return;
 
-    // Wait a bit to ensure the page is fully rendered
-    const timer = setTimeout(async () => {
-      try {
-        const response = await fetch("/api/update-dealer-index", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-
-        if (response.ok) {
-          console.log("Dealer index updated successfully after page load");
-        } else {
-          console.error("Failed to update dealer index");
-        }
-      } catch (error) {
-        console.error("Error updating dealer index:", error);
-      }
-    }, 2000); // Wait 2 seconds after content loads
+    // Reduced timeout from 2 seconds to 1 second for faster updates
+    const timer = setTimeout(updateDealerIndex, 1000);
 
     return () => clearTimeout(timer);
-  }, [pageContent]);
+  }, [pageContent, updateDealerIndex]);
+
+  // Memoize carousel configuration
+  const carouselConfig = useMemo(() => ({
+    interval: 3000,
+    transitionDuration: 500
+  }), []);
 
   // First useEffect for first carousel
   useEffect(() => {
@@ -52,11 +61,11 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
       currentIndex = (currentIndex + 1) % totalItems;
       const translateX = -(currentIndex * 100);
       carouselTrack.style.transform = `translateX(${translateX}%)`;
-      carouselTrack.style.transition = "transform 0.5s ease-in-out";
-    }, 3000);
+      carouselTrack.style.transition = `transform ${carouselConfig.transitionDuration}ms ease-in-out`;
+    }, carouselConfig.interval);
 
     return () => clearInterval(interval);
-  }, [pageContent]);
+  }, [pageContent, carouselConfig]);
 
   // Second useEffect for second carousel
   useEffect(() => {
@@ -90,11 +99,11 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
       updateCarousel();
     };
 
-    let autoScrollInterval = setInterval(nextSlide, 3000);
+    let autoScrollInterval = setInterval(nextSlide, carouselConfig.interval);
 
     const restartAutoScroll = () => {
       clearInterval(autoScrollInterval);
-      autoScrollInterval = setInterval(nextSlide, 3000);
+      autoScrollInterval = setInterval(nextSlide, carouselConfig.interval);
     };
 
     const handleResize = () => {
@@ -107,7 +116,7 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
       clearInterval(autoScrollInterval);
       window.removeEventListener("resize", handleResize);
     };
-  }, [pageContent]);
+  }, [pageContent, carouselConfig]);
 
   return (
     <div className="bg-gray-100 font-sans">

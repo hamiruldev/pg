@@ -1,11 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable SSR caching
-  experimental: {
-    // Force dynamic rendering
-    isrMemoryCacheSize: 0,
-  },
   // Disable static generation for dynamic content
   output: 'standalone',
   // Disable caching for API routes
