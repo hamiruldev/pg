@@ -8,7 +8,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
     }
 
-    const response = await fetch(url);
+    const response = await fetch(`https://publicgoldofficial.com/page/` + url);
+
     const content = await response.text();
 
     return NextResponse.json({ content });

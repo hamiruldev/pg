@@ -254,6 +254,7 @@ export default function Home() {
 
         .text-white {
           color: white !important;
+          text-align: center;
         }
 
         .carousel-container {

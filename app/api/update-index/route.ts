@@ -32,32 +32,61 @@ export async function GET() {
     }
 
     const currentIndex = redirectRow.current_index;
+
     const nextIndex = (currentIndex + 1) % dealers.length;
+
     const selectedDealer = dealers[nextIndex];
 
-    if (!selectedDealer.url) {
+
+
+    if (!selectedDealer['Username PGO']) {
+
       return NextResponse.json({ error: "Selected dealer missing URL." }, { status: 500 });
+
     }
+
+
 
     // Step 3: Update index in NocoDB
+
     const updateResponse = await fetch(REDIRECT_INDEX_PATCH_URL, {
+
       method: 'PATCH',
+
       headers,
+
       body: JSON.stringify({
+
         current_index: nextIndex,
+
         Id: 34,
+
       })
+
     });
 
+
+
     if (!updateResponse.ok) {
+
       return NextResponse.json({ error: "Failed to update index." }, { status: 500 });
+
     }
 
+
+
     // Return the selected dealer URL
-    return NextResponse.json({ url: selectedDealer.url });
+
+    return NextResponse.json({ url: selectedDealer['Username PGO'] });
+
+
 
   } catch (err) {
+
     console.error("Error:", err);
+
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+
   }
+
 } 
