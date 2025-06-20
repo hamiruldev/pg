@@ -3,6 +3,10 @@ import Image from "next/image";
 import { getDealerData, getPageContent } from "./lib/data";
 import InteractiveContent from "./components/InteractiveContent";
 
+// Force dynamic rendering - no caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Server Component for loading state
 function LoadingScreen() {
   return (
@@ -89,10 +93,17 @@ export default async function Home() {
     // Server-side data fetching
     const dealerUrl = await getDealerData();
     const pageContent = await getPageContent(dealerUrl);
+    
+    // Add timestamp for debugging cache issues
+    const timestamp = new Date().toISOString();
 
     return (
       <Suspense fallback={<LoadingScreen />}>
         <InteractiveContent pageContent={pageContent} />
+        {/* Hidden timestamp for debugging */}
+        <div style={{ display: 'none' }} data-timestamp={timestamp}>
+          Last updated: {timestamp}
+        </div>
       </Suspense>
     );
   } catch (error) {

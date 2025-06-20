@@ -11,7 +11,10 @@ const headers = {
 export async function getDealerData(): Promise<string> {
   try {
     // Step 1: Get dealer list
-    const dealersRes = await fetch(DEALERS_URL, { headers });
+    const dealersRes = await fetch(DEALERS_URL, { 
+      headers,
+      cache: 'no-store'
+    });
     const dealersData = await dealersRes.json();
     const dealers = dealersData.list;
 
@@ -20,7 +23,10 @@ export async function getDealerData(): Promise<string> {
     }
 
     // Step 2: Get current redirect index
-    const indexRes = await fetch(REDIRECT_INDEX_URL, { headers });
+    const indexRes = await fetch(REDIRECT_INDEX_URL, { 
+      headers,
+      cache: 'no-store'
+    });
     const indexData = await indexRes.json();
 
     const redirectRow = indexData.list?.[0];
@@ -46,7 +52,10 @@ export async function getDealerData(): Promise<string> {
 export async function updateDealerIndex(): Promise<void> {
   try {
     // Step 1: Get dealer list
-    const dealersRes = await fetch(DEALERS_URL, { headers });
+    const dealersRes = await fetch(DEALERS_URL, { 
+      headers,
+      cache: 'no-store'
+    });
     const dealersData = await dealersRes.json();
     const dealers = dealersData.list;
 
@@ -55,7 +64,10 @@ export async function updateDealerIndex(): Promise<void> {
     }
 
     // Step 2: Get current redirect index
-    const indexRes = await fetch(REDIRECT_INDEX_URL, { headers });
+    const indexRes = await fetch(REDIRECT_INDEX_URL, { 
+      headers,
+      cache: 'no-store'
+    });
     const indexData = await indexRes.json();
 
     const redirectRow = indexData.list?.[0];
@@ -71,6 +83,7 @@ export async function updateDealerIndex(): Promise<void> {
     const updateResponse = await fetch(REDIRECT_INDEX_PATCH_URL, {
       method: 'PATCH',
       headers,
+      cache: 'no-store',
       body: JSON.stringify({
         current_index: nextIndex,
         Id: 34,
@@ -94,7 +107,9 @@ export async function getPageContent(url: string): Promise<string> {
       throw new Error("URL is required");
     }
 
-    const response = await fetch(`https://publicgoldofficial.com/page/${url}`);
+    const response = await fetch(`https://publicgoldofficial.com/page/${url}`, {
+      cache: 'no-store'
+    });
     
     if (!response.ok) {
       throw new Error(`Failed to fetch content: ${response.status}`);

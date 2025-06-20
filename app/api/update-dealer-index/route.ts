@@ -1,10 +1,23 @@
 import { NextResponse } from 'next/server';
 import { updateDealerIndex } from '../../lib/data';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function POST() {
   try {
     await updateDealerIndex();
-    return NextResponse.json({ success: true, message: "Dealer index updated successfully" });
+    return NextResponse.json(
+      { success: true, message: "Dealer index updated successfully" },
+      {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }
+    );
   } catch (error) {
     console.error("Error updating dealer index:", error);
     return NextResponse.json(
