@@ -8,7 +8,7 @@ const headers = {
   'Content-Type': 'application/json'
 };
 
-// Create a fetch wrapper with timeout for SSG
+// Create a fetch wrapper with timeout - no caching
 const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout = 10000) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -17,8 +17,8 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout 
     const response = await fetch(url, {
       ...options,
       signal: controller.signal,
-      // Use cache for SSG build-time generation
-      cache: 'force-cache'
+      // Disable caching - fetch fresh data every time
+      cache: 'no-store'
     });
     clearTimeout(timeoutId);
     return response;
@@ -148,7 +148,7 @@ export async function getPageContent(url: string): Promise<string> {
     }
 
     const response = await fetchWithTimeout(`https://publicgoldofficial.com/page/${url}`, {
-      cache: 'force-cache' // Cache for SSG build-time generation
+      cache: 'no-store' // No caching - fetch fresh content every time
     });
     
     if (!response.ok) {

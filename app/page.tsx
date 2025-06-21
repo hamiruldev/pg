@@ -1,11 +1,10 @@
 import { Suspense, lazy } from "react";
-import { getDealerData, getPageContent } from "./lib/data";
+import InteractiveContent from './components/InteractiveContent';
+import { getDealerData, getPageContent } from './lib/data';
 
-// Dynamic imports for heavy components
-const InteractiveContent = lazy(() => import("./components/InteractiveContent"));
+// Disable ISR caching - make page dynamic
+export const dynamic = 'force-dynamic';
 
-// Static Site Generation
-export const dynamic = 'force-static';
 
 // Loading state component
 function LoadingScreen() {
@@ -86,19 +85,11 @@ function LoadingScreen() {
     </div>
   );
 }
-
-// Main Server Component with Static Generation
 export default async function Home() {
-  const startTime = Date.now();
-  
   try {
-    // Server-side data fetching - get dealer URL first, then content
+    // Server-side data fetching without caching
     const dealerUrl = await getDealerData();
     const pageContent = await getPageContent(dealerUrl);
-    
-    // Add timestamp for debugging cache issues
-    const timestamp = new Date().toISOString();
-    const loadTime = Date.now() - startTime;
 
     return (
       <Suspense fallback={<LoadingScreen />}>
@@ -110,7 +101,19 @@ export default async function Home() {
       </Suspense>
     );
   } catch (error) {
-    console.error("Error in Home component:", error);
-    return <LoadingScreen />;
+    console.error('Error in Home component:', error);
+
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">
+            Content Unavailable
+          </h1>
+          <p className="text-gray-600">
+            Unable to load content at this time. Please try again later.
+          </p>
+        </div>
+      </main>
+    );
   }
 }
