@@ -1,30 +1,28 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable static generation for dynamic content
-  output: 'standalone',
-  // Disable caching for API routes
-  async headers() {
-    return [
-      {
-        source: '/api/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate',
-          },
-          {
-            key: 'Pragma',
-            value: 'no-cache',
-          },
-          {
-            key: 'Expires',
-            value: '0',
-          },
-        ],
-      },
-    ];
+  // Enable Static Site Generation
+  output: 'export',
+  
+  // Image optimization
+  images: {
+    unoptimized: true, // Required for static export
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
+  
+  // Optimize bundle size
+  experimental: {
+    optimizePackageImports: ['react', 'react-dom'],
+  },
+  
+  // Compression
+  compress: true,
+  
+  // Static export configuration
+  trailingSlash: true,
+  skipTrailingSlashRedirect: true,
 };
 
 export default nextConfig;

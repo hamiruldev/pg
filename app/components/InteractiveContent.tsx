@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useMemo } from "react";
+import { useEffect, useCallback, useMemo, useState } from "react";
 
 interface InteractiveContentProps {
   pageContent: string;
 }
 
 export default function InteractiveContent({ pageContent }: InteractiveContentProps) {
-  const carouselTrackRef = useRef(null);
-  const carouselRef = useRef(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Ensure hydration is complete before rendering dynamic content
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   // Memoize the update dealer index function
   const updateDealerIndex = useCallback(async () => {
@@ -32,13 +36,13 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
 
   // Update dealer index after page is fully loaded - reduced timeout for faster updates
   useEffect(() => {
-    if (!pageContent) return;
+    if (!pageContent || !isHydrated) return;
 
     // Reduced timeout from 2 seconds to 1 second for faster updates
     const timer = setTimeout(updateDealerIndex, 1000);
 
     return () => clearTimeout(timer);
-  }, [pageContent, updateDealerIndex]);
+  }, [pageContent, updateDealerIndex, isHydrated]);
 
   // Memoize carousel configuration
   const carouselConfig = useMemo(() => ({
@@ -48,7 +52,7 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
 
   // First useEffect for first carousel
   useEffect(() => {
-    if (!pageContent) return;
+    if (!pageContent || !isHydrated) return;
 
     const carouselTrack = document.getElementById("carouselTrack");
     if (!carouselTrack) return;
@@ -65,11 +69,11 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
     }, carouselConfig.interval);
 
     return () => clearInterval(interval);
-  }, [pageContent, carouselConfig]);
+  }, [pageContent, carouselConfig, isHydrated]);
 
   // Second useEffect for second carousel
   useEffect(() => {
-    if (!pageContent) return;
+    if (!pageContent || !isHydrated) return;
 
     const carousel = document.getElementById("carousel");
     if (!carousel) return;
@@ -92,19 +96,7 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
       updateCarousel();
     };
 
-    const prevSlide = () => {
-      const imagesPerSlide = getImagesPerSlide();
-      const maxIndex = totalImages - imagesPerSlide;
-      currentIndex2 = currentIndex2 > 0 ? currentIndex2 - 1 : maxIndex;
-      updateCarousel();
-    };
-
     let autoScrollInterval = setInterval(nextSlide, carouselConfig.interval);
-
-    const restartAutoScroll = () => {
-      clearInterval(autoScrollInterval);
-      autoScrollInterval = setInterval(nextSlide, carouselConfig.interval);
-    };
 
     const handleResize = () => {
       updateCarousel();
@@ -116,11 +108,26 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
       clearInterval(autoScrollInterval);
       window.removeEventListener("resize", handleResize);
     };
-  }, [pageContent, carouselConfig]);
+  }, [pageContent, carouselConfig, isHydrated]);
+
+  // Show loading state until hydration is complete
+  if (!isHydrated) {
+    return (
+      <div className="bg-gray-100 font-sans">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-100 font-sans">
-      <div dangerouslySetInnerHTML={{ __html: pageContent }} />
+      <div 
+        dangerouslySetInnerHTML={{ 
+          __html: pageContent 
+        }} 
+      />
       
       <style jsx global>{`
         @keyframes spin {
@@ -229,6 +236,22 @@ export default function InteractiveContent({ pageContent }: InteractiveContentPr
           70% {
             transform: scale(1);
             box-shadow: 0 0 0 15px rgba(229, 62, 62, 0);
+          }
+        }
+
+        /* Optimized image loading styles */
+        .image-loading {
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
           }
         }
       `}</style>

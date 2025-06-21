@@ -8,7 +8,7 @@ const headers = {
   'Content-Type': 'application/json'
 };
 
-// Create a fetch wrapper with timeout
+// Create a fetch wrapper with timeout for SSG
 const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout = 10000) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -17,7 +17,8 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout 
     const response = await fetch(url, {
       ...options,
       signal: controller.signal,
-      cache: 'no-store' // Disable fetch caching
+      // Use cache for SSG build-time generation
+      cache: 'force-cache'
     });
     clearTimeout(timeoutId);
     return response;
@@ -27,38 +28,63 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeout 
   }
 };
 
+// Create a fetch wrapper for dynamic updates (no cache)
+const fetchWithTimeoutNoCache = async (url: string, options: RequestInit = {}, timeout = 10000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+      cache: 'no-store' // No cache for dynamic updates
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+};
+
+// Normalize HTML content to prevent hydration errors
+const normalizeHtml = (html: string): string => {
+  return html
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .replace(/>\s+</g, '><') // Remove whitespace between tags
+    .trim(); // Remove leading/trailing whitespace
+};
+
 export async function getDealerData(): Promise<string> {
   try {
-    // Fetch dealer list and redirect index in parallel for better performance
-    const [dealersRes, indexRes] = await Promise.all([
-      fetchWithTimeout(DEALERS_URL, { headers }),
-      fetchWithTimeout(REDIRECT_INDEX_URL, { headers })
-    ]);
-
-    const [dealersData, indexData] = await Promise.all([
-      dealersRes.json(),
-      indexRes.json()
-    ]);
-
+    // Step 1: Get current redirect index first
+    const indexRes = await fetchWithTimeout(REDIRECT_INDEX_URL, { headers });
+    const indexData = await indexRes.json();
+    
+    const redirectRow = indexData.list?.[0];
+    if (!redirectRow || typeof redirectRow.current_index !== 'number') {
+      throw new Error("Invalid redirect index.");
+    }
+    
+    const currentIndex = redirectRow.current_index;
+    
+    // Step 2: Get dealer list
+    const dealersRes = await fetchWithTimeout(DEALERS_URL, { headers });
+    const dealersData = await dealersRes.json();
     const dealers = dealersData.list;
 
     if (!dealers || dealers.length === 0) {
       throw new Error("No dealers available.");
     }
 
-    const redirectRow = indexData.list?.[0];
-
-    if (!redirectRow || typeof redirectRow.current_index !== 'number') {
-      throw new Error("Invalid redirect index.");
-    }
-
-    const currentIndex = redirectRow.current_index;
-    const selectedDealer = dealers[currentIndex]; // Use current index, don't update yet
+    // Step 3: Use current index to select the dealer (ensures fair rotation)
+    const selectedDealer = dealers[currentIndex];
 
     if (!selectedDealer['Username PGO']) {
       throw new Error("Selected dealer missing URL.");
     }
 
+    console.log(`Using dealer at index ${currentIndex} for fair rotation`);
     return selectedDealer['Username PGO'];
   } catch (error) {
     console.error("Error in getDealerData:", error);
@@ -68,10 +94,10 @@ export async function getDealerData(): Promise<string> {
 
 export async function updateDealerIndex(): Promise<void> {
   try {
-    // Fetch dealer list and redirect index in parallel
+    // Fetch dealer list and redirect index in parallel (no cache for updates)
     const [dealersRes, indexRes] = await Promise.all([
-      fetchWithTimeout(DEALERS_URL, { headers }),
-      fetchWithTimeout(REDIRECT_INDEX_URL, { headers })
+      fetchWithTimeoutNoCache(DEALERS_URL, { headers }),
+      fetchWithTimeoutNoCache(REDIRECT_INDEX_URL, { headers })
     ]);
 
     const [dealersData, indexData] = await Promise.all([
@@ -95,7 +121,7 @@ export async function updateDealerIndex(): Promise<void> {
     const nextIndex = (currentIndex + 1) % dealers.length;
 
     // Step 3: Update index in NocoDB
-    const updateResponse = await fetchWithTimeout(REDIRECT_INDEX_PATCH_URL, {
+    const updateResponse = await fetchWithTimeoutNoCache(REDIRECT_INDEX_PATCH_URL, {
       method: 'PATCH',
       headers,
       body: JSON.stringify({
@@ -108,7 +134,7 @@ export async function updateDealerIndex(): Promise<void> {
       throw new Error("Failed to update index.");
     }
 
-    console.log("Dealer index updated successfully");
+    console.log(`Dealer index updated from ${currentIndex} to ${nextIndex} for fair rotation`);
   } catch (error) {
     console.error("Error in updateDealerIndex:", error);
     throw error;
@@ -122,7 +148,7 @@ export async function getPageContent(url: string): Promise<string> {
     }
 
     const response = await fetchWithTimeout(`https://publicgoldofficial.com/page/${url}`, {
-      cache: 'no-store' // Disable fetch caching
+      cache: 'force-cache' // Cache for SSG build-time generation
     });
     
     if (!response.ok) {
@@ -130,7 +156,9 @@ export async function getPageContent(url: string): Promise<string> {
     }
 
     const content = await response.text();
-    return content;
+    
+    // Normalize HTML content to prevent hydration errors
+    return normalizeHtml(content);
   } catch (error) {
     console.error("Error in getPageContent:", error);
     throw error;

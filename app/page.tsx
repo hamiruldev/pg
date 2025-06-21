@@ -1,15 +1,13 @@
 import { Suspense, lazy } from "react";
-import Image from "next/image";
 import { getDealerData, getPageContent } from "./lib/data";
 
-// Lazy load the InteractiveContent component for better performance
+// Dynamic imports for heavy components
 const InteractiveContent = lazy(() => import("./components/InteractiveContent"));
 
-// Force dynamic rendering - no caching
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Static Site Generation
+export const dynamic = 'force-static';
 
-// Server Component for loading state
+// Loading state component
 function LoadingScreen() {
   return (
     <div
@@ -89,7 +87,7 @@ function LoadingScreen() {
   );
 }
 
-// Main Server Component
+// Main Server Component with Static Generation
 export default async function Home() {
   const startTime = Date.now();
   
@@ -106,9 +104,9 @@ export default async function Home() {
       <Suspense fallback={<LoadingScreen />}>
         <InteractiveContent pageContent={pageContent} />
         {/* Hidden timestamp for debugging */}
-        <div style={{ display: 'none' }} data-timestamp={timestamp} data-load-time={loadTime}>
-          Last updated: {timestamp} | Load time: {loadTime}ms
-        </div>
+        {/* <div style={{ display: 'none' }} data-timestamp={timestamp} data-load-time={loadTime}>
+          Last updated: {timestamp} | Load time: {loadTime}ms | Static Site Generation
+        </div> */}
       </Suspense>
     );
   } catch (error) {
