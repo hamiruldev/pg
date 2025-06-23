@@ -46,6 +46,19 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://app.nocodb.com" />
         <link rel="dns-prefetch" href="https://publicgoldofficial.com" />
         <script src="https://cdn.tailwindcss.com"></script>
+        
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-HN3HP90WZY"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-HN3HP90WZY');
+            `,
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
