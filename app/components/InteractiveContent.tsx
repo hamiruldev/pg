@@ -4,10 +4,18 @@ import { useEffect, useCallback, useMemo, useState } from "react";
 
 interface InteractiveContentProps {
   pageContent: string;
+  dealerUrl: string;
 }
 
-export default function InteractiveContent({ pageContent }: InteractiveContentProps) {
+export default function InteractiveContent({ pageContent, dealerUrl }: InteractiveContentProps) {
   const [isHydrated, setIsHydrated] = useState(false);
+
+  // Set document title after hydration and content load
+  useEffect(() => {
+    if (isHydrated && dealerUrl) {
+      document.title = `Public Gold Official | ${dealerUrl}`;
+    }
+  }, [isHydrated, dealerUrl]);
 
   // Ensure hydration is complete before rendering dynamic content
   useEffect(() => {

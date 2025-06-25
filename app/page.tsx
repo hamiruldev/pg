@@ -93,7 +93,7 @@ export default async function Home() {
 
     return (
       <Suspense fallback={<LoadingScreen />}>
-        <InteractiveContent pageContent={pageContent} />
+        <InteractiveContent pageContent={pageContent} dealerUrl={dealerUrl} />
         {/* Hidden timestamp for debugging */}
         {/* <div style={{ display: 'none' }} data-timestamp={timestamp} data-load-time={loadTime}>
           Last updated: {timestamp} | Load time: {loadTime}ms | Static Site Generation
