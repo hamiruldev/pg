@@ -92,6 +92,61 @@ export async function getDealerData(): Promise<string> {
   }
 }
 
+export async function getDealerInfo(): Promise<{ username: string; name?: string; location?: string; customers?: number, no_tel?: string, image_url?: string }> {
+  try {
+    // Step 1: Get current redirect index first
+    const indexRes = await fetchWithTimeout(REDIRECT_INDEX_URL, { headers });
+    const indexData = await indexRes.json();
+    
+    const redirectRow = indexData.list?.[0];
+    if (!redirectRow || typeof redirectRow.current_index !== 'number') {
+      throw new Error("Invalid redirect index.");
+    }
+    
+    const currentIndex = redirectRow.current_index;
+    
+    // Step 2: Get dealer list
+    const dealersRes = await fetchWithTimeout(DEALERS_URL, { headers });
+    const dealersData = await dealersRes.json();
+    const dealers = dealersData.list;
+
+    if (!dealers || dealers.length === 0) {
+      throw new Error("No dealers available.");
+    }
+
+    // Step 3: Use current index to select the dealer (ensures fair rotation)
+    const selectedDealer = dealers[currentIndex];
+
+    if (!selectedDealer['Username PGO']) {
+      throw new Error("Selected dealer missing URL.");
+    }
+
+    console.log(`Using dealer at index ${currentIndex} for fair rotation`);
+
+    console.log("selectedDealer", selectedDealer);
+    
+    return {
+      username: selectedDealer['Username PGO'],
+      name: selectedDealer['Name'] || selectedDealer['Nama'] || 'Dealer',
+      location: selectedDealer['Location'] || selectedDealer['Lokasi'] || 'Malaysia',
+      customers: selectedDealer['Customers'] || selectedDealer['Pelanggan'] || 300,
+      no_tel: selectedDealer['no_tel'] || selectedDealer['no_tel'] || '0123456789',
+      image_url: selectedDealer['image_url'] || selectedDealer['image_url'] || 'https://via.placeholder.com/150'
+    };
+  } catch (error) {
+    console.error("Error in getDealerInfo:", error);
+    // Return fallback data
+    return {
+      username: 'default',
+      name: 'Dealer',
+      location: 'Malaysia',
+      customers: 300,
+      no_tel: '0123456789',
+      image_url: 'https://via.placeholder.com/150'
+    };
+  }
+}
+
 export async function updateDealerIndex(): Promise<void> {
   try {
     // Fetch dealer list and redirect index in parallel (no cache for updates)
