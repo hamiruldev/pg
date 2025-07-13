@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 
 interface DealerInfo {
@@ -10,6 +10,7 @@ interface DealerInfo {
   customers?: number;
   no_tel?: string;
   image_url?: string;
+  email?: string;
 }
 
 interface FormData {
@@ -19,6 +20,7 @@ interface FormData {
   phone: string;
   agreement: boolean;
   customerAgreement: boolean;
+  dealerEmail?: string;
 }
 
 export default function NewPage() {
@@ -33,7 +35,8 @@ export default function NewPage() {
     location: 'Malaysia',
     customers: 300,
     no_tel: '0123456789',
-    image_url: 'https://via.placeholder.com/150'
+    image_url: 'https://via.placeholder.com/150',
+    email: 'default'
   });
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<FormData>({
@@ -42,7 +45,8 @@ export default function NewPage() {
     email: '',
     phone: '',
     agreement: false,
-    customerAgreement: false
+    customerAgreement: false,
+    dealerEmail: ''
   });
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const [dialogImageSrc, setDialogImageSrc] = useState<string | null>(null);
@@ -58,6 +62,26 @@ export default function NewPage() {
   type CarouselType = 'testimoni' | 'gap';
   const [dialogCarousel, setDialogCarousel] = useState<CarouselType>('testimoni');
   const [dialogIndex, setDialogIndex] = useState<number>(0);
+
+  // Call update dealer index API on page load
+  useEffect(() => {
+    const updateDealerIndex = async () => {
+      try {
+        const response = await fetch('/api/update-dealer-index', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (response.ok) {
+          console.log('Dealer index updated successfully after page load');
+        } else {
+          console.error('Failed to update dealer index');
+        }
+      } catch (error) {
+        console.error('Error updating dealer index:', error);
+      }
+    };
+    updateDealerIndex();
+  }, []);
 
   useEffect(() => {
     const fetchDealerInfo = async () => {
@@ -103,20 +127,33 @@ export default function NewPage() {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Add dealer email to the payload
+      const payload = {
+        ...formData,
+        dealerEmail: dealerInfo.email || '', // always send current dealer email
+      };
 
-      // Show success message
-      alert('Pendaftaran berjaya! Dealer akan menghubungi anda dalam masa 24 jam.');
-      closeDrawer();
-      setFormData({
-        fullName: '',
-        icNumber: '',
-        email: '',
-        phone: '',
-        agreement: false,
-        customerAgreement: false
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
+      const result = await response.json();
+      if (result.success) {
+        alert('Pendaftaran berjaya! Dealer akan menghubungi anda dalam masa 24 jam.');
+        closeDrawer();
+        setFormData({
+          fullName: '',
+          icNumber: '',
+          email: '',
+          phone: '',
+          agreement: false,
+          customerAgreement: false,
+          dealerEmail: dealerInfo.email || ''
+        });
+      } else {
+        alert('Ralat berlaku semasa menghantar borang. Sila cuba lagi.');
+      }
     } catch (error) {
       alert('Ralat berlaku. Sila cuba lagi.');
     } finally {
@@ -775,6 +812,12 @@ export default function NewPage() {
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
+                      {/* Hidden Dealer Email Field */}
+                      <input
+                        type="hidden"
+                        id="dealerEmail"
+                        value={dealerInfo.email || ''}
+                      />
                       {/* Full Name */}
                       <div>
                         <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
@@ -786,7 +829,7 @@ export default function NewPage() {
                           required
                           value={formData.fullName}
                           onChange={(e) => handleInputChange('fullName', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          className="w-full px-3 py-2 border text-black border-gray-300 rounded-lg focus:ring-2 focus:text-black focus:ring-red-500 focus:border-red-500 transition-colors"
                           placeholder="Masukkan nama penuh anda"
                         />
                       </div>
@@ -798,12 +841,15 @@ export default function NewPage() {
                         </label>
                         <input
                           type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
                           id="icNumber"
                           required
                           value={formData.icNumber}
-                          onChange={(e) => handleInputChange('icNumber', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                          placeholder="Contoh: 880101-01-1234"
+                          onChange={(e) => handleInputChange('icNumber', e.target.value.replace(/\D/g, ''))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          placeholder="Contoh: 880101011234"
+                          onInput={e => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ''))}
                         />
                       </div>
 
@@ -818,7 +864,7 @@ export default function NewPage() {
                           required
                           value={formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                           placeholder="contoh@email.com"
                         />
                       </div>
@@ -830,12 +876,15 @@ export default function NewPage() {
                         </label>
                         <input
                           type="tel"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
                           id="phone"
                           required
                           value={formData.phone}
-                          onChange={(e) => handleInputChange('phone', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                          placeholder="Contoh: 012-3456789"
+                          onChange={(e) => handleInputChange('phone', e.target.value.replace(/\D/g, ''))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          placeholder="Contoh: 0123456789"
+                          onInput={e => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ''))}
                         />
                       </div>
 
@@ -935,7 +984,7 @@ export default function NewPage() {
                         required
                         value={formData.fullName}
                         onChange={(e) => handleInputChange('fullName', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                        className="w-full px-3 py-2 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                         placeholder="Masukkan nama penuh anda"
                       />
                     </div>
@@ -950,9 +999,10 @@ export default function NewPage() {
                         id="icNumberMobile"
                         required
                         value={formData.icNumber}
-                        onChange={(e) => handleInputChange('icNumber', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                        onChange={(e) => handleInputChange('icNumber', e.target.value.replace(/\D/g, ''))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                         placeholder="Contoh: 880101-01-1234"
+                        onInput={e => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ''))}
                       />
                     </div>
 
@@ -967,7 +1017,7 @@ export default function NewPage() {
                         required
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                         placeholder="contoh@email.com"
                       />
                     </div>
@@ -982,9 +1032,10 @@ export default function NewPage() {
                         id="phoneMobile"
                         required
                         value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                        onChange={(e) => handleInputChange('phone', e.target.value.replace(/\D/g, ''))}
+                        className="w-full px-3 py-2 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                         placeholder="Contoh: 012-3456789"
+                        onInput={e => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ''))}
                       />
                     </div>
 

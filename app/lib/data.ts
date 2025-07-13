@@ -1,7 +1,7 @@
-const TOKEN = 'Ns-d1nsty5IhoxzzTef6xZY_zrmbZwI5FDq-ai-C';
-const DEALERS_URL = 'https://app.nocodb.com/api/v2/tables/m21ipqeu0aarax6/records?offset=0&limit=25&viewId=vwymej52p216msjv';
-const REDIRECT_INDEX_URL = 'https://app.nocodb.com/api/v2/tables/m5oicmtoi8r75kt/records?offset=0&limit=1&viewId=vwnkrkslt1tjqkwi';
-const REDIRECT_INDEX_PATCH_URL = 'https://app.nocodb.com/api/v2/tables/m5oicmtoi8r75kt/records';
+const TOKEN = process.env.TOKEN || '';
+const DEALERS_URL = process.env.DEALERS_URL || '';
+const REDIRECT_INDEX_URL = process.env.REDIRECT_INDEX_URL || '';
+const REDIRECT_INDEX_PATCH_URL = process.env.REDIRECT_INDEX_PATCH_URL || '';
 
 const headers = {
   'xc-token': TOKEN,
@@ -57,6 +57,13 @@ const normalizeHtml = (html: string): string => {
 
 export async function getDealerData(): Promise<string> {
   try {
+
+
+    console.log("REDIRECT_INDEX_URL", REDIRECT_INDEX_URL);
+    console.log("DEALERS_URL", DEALERS_URL);
+    console.log("TOKEN", TOKEN);
+    
+    
     // Step 1: Get current redirect index first
     const indexRes = await fetchWithTimeout(REDIRECT_INDEX_URL, { headers });
     const indexData = await indexRes.json();
@@ -92,7 +99,7 @@ export async function getDealerData(): Promise<string> {
   }
 }
 
-export async function getDealerInfo(): Promise<{ username: string; name?: string; location?: string; customers?: number, no_tel?: string, image_url?: string }> {
+export async function getDealerInfo(): Promise<{ username: string; name?: string; location?: string; customers?: number, no_tel?: string, image_url?: string, email?: string }> {
   try {
     // Step 1: Get current redirect index first
     const indexRes = await fetchWithTimeout(REDIRECT_INDEX_URL, { headers });
@@ -129,7 +136,8 @@ export async function getDealerInfo(): Promise<{ username: string; name?: string
       location: selectedDealer['Location'] || selectedDealer['Lokasi'] || 'Malaysia',
       customers: selectedDealer['Customers'] || selectedDealer['Pelanggan'] || 300,
       no_tel: selectedDealer['no_tel'] || selectedDealer['no_tel'] || '0123456789',
-      image_url: selectedDealer['image_url'] || selectedDealer['image_url'] || 'https://via.placeholder.com/150'
+      image_url: selectedDealer['image_url'] || selectedDealer['image_url'] || 'https://via.placeholder.com/150',
+      email: selectedDealer['email'] || ''
     };
   } catch (error) {
     console.error("Error in getDealerInfo:", error);

@@ -24,6 +24,7 @@ export default function InteractiveContent({ pageContent, dealerUrl }: Interacti
 
   // Memoize the update dealer index function
   const updateDealerIndex = useCallback(async () => {
+    console.log("Updating dealer index--->");
     try {
       const response = await fetch("/api/update-dealer-index", {
         method: "POST",
