@@ -407,7 +407,7 @@ export default function NewPage() {
             src="/pg-hq.png"
             alt="Public Gold HQ"
             className="absolute inset-0 w-full h-full object-cover z-0"
-            style={{ filter: 'brightness(0.5)' }}
+            style={{ filter: 'brightness(0.8)' }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-50 z-10" />
           <div className="relative z-20 text-center">
@@ -421,7 +421,7 @@ export default function NewPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={openDrawer}
-                className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
               >
                 Daftar Akaun GAP
               </button>
@@ -447,8 +447,8 @@ export default function NewPage() {
       {/* Benefits Section */}
       <section id="simpan-emas" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <img className="p-5 pb-10 w-full h-full object-cover" src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=960,h=640,fit=crop/Y4Lvpk5LLyF4D8yb/menara-public-gold-015-A1a5rqMnn5sXyRej.jpg" alt="Hero" />
+          <div className="text-center mb-16 flex flex-col justify-center items-center">
+            <img className="p-5 pb-10 w-full h-70 sm:w-full sm:h-full md:w-[50vw] md:h-[70vh] object-cover" src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=960,h=640,fit=crop/Y4Lvpk5LLyF4D8yb/menara-public-gold-015-A1a5rqMnn5sXyRej.jpg" alt="Hero" />
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               5 Kelebihan Menyimpan Emas
             </h2>
@@ -460,7 +460,7 @@ export default function NewPage() {
             <img
               src="/gold-background.png"
               alt="Gold Background"
-              className="my-10 object-cover z-0 mx-auto w-full h-48 sm:w-full sm:h-full md:w-[50vw] md:h-[70vh] rounded-xl"
+              className="my-10 object-cover z-0 mx-auto w-full h-80 sm:w-full sm:h-full md:w-[50vw] md:h-[70vh] rounded-xl"
               style={{ maxWidth: '100%', maxHeight: '100%' }}
             />
           </div>
@@ -504,7 +504,7 @@ export default function NewPage() {
           <div className="text-center mt-12">
             <button
               onClick={openDrawer}
-              className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+              className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
             >
               Daftar Akaun GAP
             </button>
@@ -547,7 +547,7 @@ export default function NewPage() {
 
             <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-4xl mx-auto">
               <div className="flex items-center mb-6">
-            
+
                 <img src="/steven.png" alt="Public Gold" className="w-20 h-20 mr-5 rounded-full" />
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">Steven Blanda</h3>
@@ -570,7 +570,7 @@ export default function NewPage() {
             <div className="text-center mt-12">
               <button
                 onClick={openDrawer}
-                className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
               >
                 Daftar Akaun GAP
               </button>
@@ -637,7 +637,7 @@ export default function NewPage() {
           <div className="flex justify-center pb-10">
             <button
               onClick={openDrawer}
-              className="w-[300px] bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+              className="w-[300px] bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
             >
               Daftar Akaun GAP
             </button>
@@ -648,9 +648,7 @@ export default function NewPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-amber-600 to-yellow-600">
-
-      
+      <section className="py-20 bg-black">
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
@@ -662,7 +660,7 @@ export default function NewPage() {
             <div className="flex flex-col items-center justify-center">
               <button
                 onClick={openDrawer}
-                className="bg-white text-red-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                className="bg-white text-red-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
               >
                 Klik Disini Untuk Daftar
               </button>
@@ -671,9 +669,9 @@ export default function NewPage() {
 
             <div className="flex flex-col items-center justify-center">
 
-              <img src="ebook.png" alt="Ebook" className="w-full h-auto object-cover rounded-lg" />
+              <img src="ebook.png" alt="Ebook" className=" sm:w-full sm:h-full md:w-[40vw] md:h-[50vh] object-cover rounded-lg" />
 
-              <button onClick={() => window.open(`https://publicgoldofficial.com/app/ebook/${dealerInfo.username}#form`, '_blank')} className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-red-600 transition-all duration-200">
+              <button onClick={() => window.open(`https://publicgoldofficial.com/app/ebook/${dealerInfo.username}#form`, '_blank')} className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-red-600 transition-all duration-200 glow-animate">
                 Download Ebook PERCUMA
               </button>
             </div>
@@ -709,11 +707,11 @@ export default function NewPage() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
                     onClick={openDrawer}
-                    className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                    className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
                   >
                     Daftar Akaun GAP
                   </button>
-                  <button onClick={() => window.open(`${dealerInfo.no_tel}`, '_blank')} className="bg-green-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                  <button onClick={() => window.open(`${dealerInfo.no_tel}`, '_blank')} className="bg-green-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate">
                     Whatsapp Saya
                   </button>
                 </div>
@@ -1076,15 +1074,22 @@ export default function NewPage() {
                     {/* Kenapa Public Gold Content */}
                     <div className="mb-6 p-4 bg-blue-50 rounded-lg">
                       <h3 className="text-2xl font-bold text-gray-900 mb-4">Kenapa Public Gold?</h3>
+
+                      <img alt="" src="/pg-hq.png" className="sm:w-full sm:h-full md:w-[40vw] md:h-[50vh] object-cover rounded-lg mb-4" />
+
                       <p className="text-lg text-gray-700 mb-4">
                         Public Gold adalah salah satu pengeluar emas syariah terkemuka di Malaysia. Kami menawarkan pelbagai produk emas yang patuh syariah, termasuk:
                       </p>
 
                       <ul className="list-disc list-inside text-lg text-gray-700 mb-4">
                         <li>Emas fizikal (barang fizikal)</li>
-                        <li>Emas digital (simpanan emas secara elektronik)</li>
+                        <li>Emas di akaun (simpanan emas secara elektronik)</li>
                         <li>Emas syariah (emas yang telah dipastikan patuh syariah)</li>
                       </ul>
+
+                      <img alt="" src="/syariah1.png" className="px-auto sm:w-full sm:h-full md:w-[40vw] md:h-[50vh] object-cover rounded-lg mb-4" />
+
+
                       <p className="text-lg text-gray-700">
                         Kelebihan menyimpan emas dengan Public Gold:
                       </p>
@@ -1101,7 +1106,7 @@ export default function NewPage() {
                     <div className="mb-6 p-4 bg-green-50 rounded-lg">
                       <h3 className="text-2xl font-bold text-gray-900 mb-4">Tentang Public Gold</h3>
                       <p className="text-lg text-gray-700 mb-4">
-                        Public Gold telah beroperasi sejak 2008 dan telah menjadi pengeluar emas syariah terkemuka di Malaysia. Kami mempunyai lebih 100 gerai di seluruh negara dan lebih 100,000 pelanggan.
+                        Public Gold telah beroperasi sejak 2008 dan telah menjadi pengeluar emas syariah terkemuka di Malaysia. Kami mempunyai lebih 100 cawangan di seluruh negara dan lebih 100,000 pelanggan.
                       </p>
                       <p className="text-lg text-gray-700">
                         Kami bertujuan untuk membantu anda menguruskan kekayaan anda dengan lebih baik melalui emas.
@@ -1110,9 +1115,9 @@ export default function NewPage() {
 
                     {/* Branch Information */}
                     <div className="mb-6 p-4 bg-purple-50 rounded-lg">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">Lokasi Gerai Public Gold</h3>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">Lokasi Cawangan Public Gold</h3>
                       <p className="text-lg text-gray-700">
-                        Kami mempunyai lebih 100 gerai di seluruh Malaysia. Anda boleh menemui kami di:
+                        Kami mempunyai lebih 100 cawangan di seluruh Malaysia. Anda boleh menemui kami di:
                       </p>
                       <ul className="list-disc list-inside text-lg text-gray-700">
                         <li>Kuala Lumpur</li>
@@ -1144,11 +1149,11 @@ export default function NewPage() {
                         </div>
                         <div>
                           <p className="font-semibold text-gray-900">Apakah jenis emas yang tersedia?</p>
-                          <p className="text-gray-700">Kami menawarkan emas fizikal, emas digital, dan emas syariah yang patuh syariah.</p>
+                          <p className="text-gray-700">Kami menawarkan emas fizikal, emas di akaun, dan emas syariah yang patuh syariah.</p>
                         </div>
                         <div>
                           <p className="font-semibold text-gray-900">Apakah proses pembelian emas?</p>
-                          <p className="text-gray-700">Anda boleh membeli emas melalui gerai kami atau melalui akaun simpanan emas kami secara atas talian.</p>
+                          <p className="text-gray-700">Anda boleh membeli emas melalui cawangan kami atau melalui akaun simpanan emas kami secara atas talian.</p>
                         </div>
                         <div>
                           <p className="font-semibold text-gray-900">Apakah kelebihan akaun simpanan emas kami?</p>
@@ -1219,7 +1224,7 @@ export default function NewPage() {
                   <div className="mb-6 p-4 bg-green-50 rounded-lg">
                     <h3 className="text-2xl font-bold text-gray-900 mb-4">Tentang Public Gold</h3>
                     <p className="text-lg text-gray-700 mb-4">
-                      Public Gold telah beroperasi sejak 2008 dan telah menjadi pengeluar emas syariah terkemuka di Malaysia. Kami mempunyai lebih 100 gerai di seluruh negara dan lebih 100,000 pelanggan.
+                      Public Gold telah beroperasi sejak 2008 dan telah menjadi pengeluar emas syariah terkemuka di Malaysia. Kami mempunyai lebih 100 cawangan di seluruh negara dan lebih 100,000 pelanggan.
                     </p>
                     <p className="text-lg text-gray-700">
                       Kami bertujuan untuk membantu anda menguruskan kekayaan anda dengan lebih baik melalui emas.
@@ -1228,9 +1233,9 @@ export default function NewPage() {
 
                   {/* Branch Information */}
                   <div className="mb-6 p-4 bg-purple-50 rounded-lg">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Lokasi Gerai Public Gold</h3>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Lokasi cawangan Public Gold</h3>
                     <p className="text-lg text-gray-700">
-                      Kami mempunyai lebih 100 gerai di seluruh Malaysia. Anda boleh menemui kami di:
+                      Kami mempunyai lebih 100 cawangan di seluruh Malaysia. Anda boleh menemui kami di:
                     </p>
 
                     <img alt="" src="/pg-branch.png" className="w-full h-auto object-cover rounded-lg mb-4 mt-4" />
@@ -1266,11 +1271,11 @@ export default function NewPage() {
                       </div>
                       <div>
                         <p className="font-semibold text-gray-900">Apakah jenis emas yang tersedia?</p>
-                        <p className="text-gray-700">Kami menawarkan emas fizikal, emas digital, dan emas syariah yang patuh syariah.</p>
+                        <p className="text-gray-700">Kami menawarkan emas fizikal, emas di akuan, dan emas syariah yang patuh syariah.</p>
                       </div>
                       <div>
                         <p className="font-semibold text-gray-900">Apakah proses pembelian emas?</p>
-                        <p className="text-gray-700">Anda boleh membeli emas melalui gerai kami atau melalui akaun simpanan emas kami secara atas talian.</p>
+                        <p className="text-gray-700">Anda boleh membeli emas melalui cawangan kami atau melalui akaun simpanan emas kami secara atas talian.</p>
                       </div>
                       <div>
                         <p className="font-semibold text-gray-900">Apakah kelebihan akaun simpanan emas kami?</p>
@@ -1379,29 +1384,14 @@ export default function NewPage() {
         </div>
       )}
 
-      <style jsx>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
+      <style jsx global>{`
+        @keyframes glow {
+          0% { box-shadow: 0 0 8px 2px #f87171, 0 0 0 #fff; }
+          50% { box-shadow: 0 0 24px 8px #f87171, 0 0 0 #fff; }
+          100% { box-shadow: 0 0 8px 2px #f87171, 0 0 0 #fff; }
         }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
+        .glow-animate {
+          animation: glow 1.8s infinite alternate;
         }
       `}</style>
     </div>

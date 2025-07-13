@@ -123,8 +123,6 @@ export async function getDealerInfo(): Promise<{ username: string; name?: string
 
     console.log(`Using dealer at index ${currentIndex} for fair rotation`);
 
-    console.log("selectedDealer", selectedDealer);
-    
     return {
       username: selectedDealer['Username PGO'],
       name: selectedDealer['Name'] || selectedDealer['Nama'] || 'Dealer',
