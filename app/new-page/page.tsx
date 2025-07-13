@@ -698,7 +698,11 @@ export default function NewPage() {
                   <img src={dealerInfo?.image_url} alt="Dealer" className="w-50 h-50 rounded-full" />
                 </div>
                 <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                  Saya <strong className="text-black">{dealerInfo.username}</strong>, Authorised Dealer Public Gold. Sehingga kini, saya telah bantu ramai orang memulakan
+                  Saya <strong className="text-black"
+                    style={{
+                      textTransform: 'capitalize'
+                    }}
+                  >{dealerInfo.username}</strong>, Authorised Dealer Public Gold. Sehingga kini, saya telah bantu ramai orang memulakan
                   simpanan emas melalui <strong>Akaun GAP</strong> <strong>serendah RM100</strong> sahaja.
                 </p>
                 <p className="text-lg text-gray-700 mb-8 leading-relaxed">
@@ -711,9 +715,9 @@ export default function NewPage() {
                   >
                     Daftar Akaun GAP
                   </button>
-                  <button onClick={() => window.open(`${dealerInfo.no_tel}`, '_blank')} className="bg-green-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate">
+                  {/* <button onClick={() => window.open(`${dealerInfo.no_tel}`, '_blank')} className="bg-green-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate">
                     Whatsapp Saya
-                  </button>
+                  </button> */}
                 </div>
               </>
             )}
@@ -919,7 +923,7 @@ export default function NewPage() {
                   </div>
 
                   {/* Form */}
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form id="mobileRegForm" onSubmit={handleSubmit} className="space-y-6 pb-28">
                     {/* Full Name */}
                     <div>
                       <label htmlFor="fullNameMobile" className="block text-sm font-medium text-gray-700 mb-2">
@@ -1015,11 +1019,14 @@ export default function NewPage() {
                       </div>
                     </div>
 
-                    {/* Submit Button */}
+                  </form>
+                  {/* Fixed footer submit button */}
+                  <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t border-gray-200 p-4 z-5 mb-7">
                     <button
                       type="submit"
+                      form="mobileRegForm"
                       disabled={isSubmitting}
-                      className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                      className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors glow-animate"
                     >
                       {isSubmitting ? (
                         <div className="flex items-center justify-center">
@@ -1030,7 +1037,7 @@ export default function NewPage() {
                         'Hantar Pendaftaran'
                       )}
                     </button>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>
