@@ -458,7 +458,7 @@ export default function NewPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={openDrawer}
-                className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
+                className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
               >
                 Daftar Akaun GAP
               </button>
@@ -485,7 +485,7 @@ export default function NewPage() {
       <section id="simpan-emas" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 flex flex-col justify-center items-center">
-            <img className="p-5 pb-10 w-full h-70 sm:w-full sm:h-full md:w-[50vw] md:h-[70vh] object-cover" src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=960,h=640,fit=crop/Y4Lvpk5LLyF4D8yb/menara-public-gold-015-A1a5rqMnn5sXyRej.jpg" alt="Hero" />
+            <img className="p-5 pb-10 w-full h-70 sm:w-full sm:h-full md:w-[50vw] md:h-[70vh] object-cover" src="/menara-indoor.jpg" alt="Hero" />
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               5 Kelebihan Menyimpan Emas
             </h2>
@@ -541,7 +541,7 @@ export default function NewPage() {
           <div className="text-center mt-12">
             <button
               onClick={openDrawer}
-              className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
+              className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
             >
               Daftar Akaun GAP
             </button>
@@ -607,7 +607,7 @@ export default function NewPage() {
             <div className="text-center mt-12">
               <button
                 onClick={openDrawer}
-                className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
+                className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
               >
                 Daftar Akaun GAP
               </button>
@@ -674,7 +674,7 @@ export default function NewPage() {
           <div className="flex justify-center pb-10">
             <button
               onClick={openDrawer}
-              className="w-[300px] bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
+              className="w-[300px] bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
             >
               Daftar Akaun GAP
             </button>
@@ -697,7 +697,7 @@ export default function NewPage() {
             <div className="flex flex-col items-center justify-center">
               <button
                 onClick={openDrawer}
-                className="bg-white text-red-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
+                className="bg-white text-red-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
               >
                 Klik Disini Untuk Daftar
               </button>
@@ -708,7 +708,7 @@ export default function NewPage() {
 
               <img src="ebook.png" alt="Ebook" className=" sm:w-full sm:h-full md:w-[40vw] md:h-[50vh] object-cover rounded-lg" />
 
-              <button onClick={() => window.open(`https://publicgoldofficial.com/app/ebook/${dealerInfo.username}#form`, '_blank')} className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-red-600 transition-all duration-200 glow-animate">
+              <button onClick={() => window.open(`https://publicgoldofficial.com/app/ebook/${dealerInfo.username}#form`, '_blank')} className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-red-600 transition-all duration-200 shimmer-animate">
                 Download Ebook PERCUMA
               </button>
             </div>
@@ -748,7 +748,7 @@ export default function NewPage() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
                     onClick={openDrawer}
-                    className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate"
+                    className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
                   >
                     Daftar Akaun GAP
                   </button>
@@ -1077,7 +1077,7 @@ export default function NewPage() {
                       type="submit"
                       form="mobileRegForm"
                       disabled={isSubmitting}
-                      className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors glow-animate"
+                      className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shimmer-animate"
                     >
                       {isSubmitting ? (
                         <div className="flex items-center justify-center">
@@ -1443,13 +1443,20 @@ export default function NewPage() {
       )}
 
       <style jsx global>{`
-        @keyframes glow {
-          0% { box-shadow: 0 0 8px 2px #f87171, 0 0 0 #fff; }
-          50% { box-shadow: 0 0 24px 8px #f87171, 0 0 0 #fff; }
-          100% { box-shadow: 0 0 8px 2px #f87171, 0 0 0 #fff; }
+        @keyframes shimmer {
+          100% { left: 125%; }
         }
-        .glow-animate {
-          animation: glow 1.8s infinite alternate;
+        .shimmer-animate {
+          position: relative;
+          overflow: hidden;
+        }
+        .shimmer-animate::after {
+          content: '';
+          position: absolute;
+          top: 0; left: -75%; width: 50%; height: 100%;
+          background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+          animation: shimmer 2s infinite;
+          pointer-events: none;
         }
       `}</style>
     </div>
