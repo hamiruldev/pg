@@ -351,11 +351,27 @@ export default function NewPage() {
                 >
                   Kenapa Public Gold
                 </button>
+
+                <button
+                  onClick={() => {
+                    const element = document.getElementById('apaitugap');
+                    if (element) {
+                      element.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }}
+                    className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                >
+                  Apa itu GAP ?
+                </button>
+
                 <button
                   onClick={openDrawer}
                   className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors duration-200"
                 >
-                  Daftar Akaun GAP
+                  Daftar Percuma
                 </button>
               </div>
             </div>
@@ -409,7 +425,7 @@ export default function NewPage() {
                 }}
                 className="bg-red-600 text-white block px-3 py-2 rounded-md text-base font-medium w-full text-left"
               >
-                Daftar Akaun GAP
+                Daftar Percuma
               </button>
             </div>
           </div>
@@ -460,22 +476,9 @@ export default function NewPage() {
                 onClick={openDrawer}
                 className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
               >
-                Daftar Akaun GAP
+                Daftar Percuma
               </button>
-              <button
-                onClick={() => {
-                  const element = document.getElementById('apaitugap');
-                  if (element) {
-                    element.scrollIntoView({
-                      behavior: 'smooth',
-                      block: 'start'
-                    });
-                  }
-                }}
-                className="border-2 border-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-600 hover:text-white transition-all duration-200"
-              >
-                Apa itu GAP ?
-              </button>
+
             </div>
           </div>
         </div>
@@ -543,7 +546,7 @@ export default function NewPage() {
               onClick={openDrawer}
               className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
             >
-              Daftar Akaun GAP
+              Daftar Percuma
             </button>
           </div>
         </div>
@@ -609,7 +612,7 @@ export default function NewPage() {
                 onClick={openDrawer}
                 className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
               >
-                Daftar Akaun GAP
+                Daftar Percuma
               </button>
             </div>
           </div>
@@ -676,7 +679,7 @@ export default function NewPage() {
               onClick={openDrawer}
               className="w-[300px] bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
             >
-              Daftar Akaun GAP
+              Daftar Percuma
             </button>
           </div>
 
@@ -750,7 +753,7 @@ export default function NewPage() {
                     onClick={openDrawer}
                     className="bg-red-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg shimmer-animate"
                   >
-                    Daftar Akaun GAP
+                    Daftar Percuma
                   </button>
                   {/* <button onClick={() => window.open(`${dealerInfo.no_tel}`, '_blank')} className="bg-green-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg glow-animate">
                     Whatsapp Saya
@@ -1440,6 +1443,21 @@ export default function NewPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* WhatsApp Floating Button */}
+      {dealerInfo.no_tel && (
+        <a
+          href={dealerInfo.no_tel}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center w-16 h-16 transition-colors duration-200"
+          aria-label="WhatsApp"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="currentColor">
+            <path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.832 4.584 2.236 6.393L4 29l7.828-2.236C13.416 27.168 15.615 28 18 28c6.627 0 12-5.373 12-12S22.627 3 16 3zm0 22c-2.021 0-3.963-.627-5.57-1.803l-.397-.282-4.653 1.33 1.33-4.653-.282-.397C5.627 18.963 5 17.021 5 15c0-6.065 4.935-11 11-11s11 4.935 11 11-4.935 11-11 11zm5.29-7.71c-.26-.13-1.54-.76-1.78-.85-.24-.09-.41-.13-.58.13-.17.26-.67.85-.82 1.02-.15.17-.3.19-.56.06-.26-.13-1.09-.4-2.07-1.28-.76-.68-1.27-1.52-1.42-1.78-.15-.26-.02-.4.11-.53.11-.11.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.58-1.4-.8-1.92-.21-.51-.43-.44-.58-.45-.15-.01-.32-.01-.5-.01-.17 0-.45.06-.68.28-.23.22-.9.88-.9 2.15s.92 2.49 1.05 2.66c.13.17 1.81 2.77 4.39 3.78.61.21 1.09.33 1.46.42.61.13 1.16.11 1.6.07.49-.05 1.54-.63 1.76-1.24.22-.61.22-1.13.15-1.24-.07-.11-.24-.17-.5-.3z"/>
+          </svg>
+        </a>
       )}
 
       <style jsx global>{`
