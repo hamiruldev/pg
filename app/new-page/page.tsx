@@ -18,7 +18,6 @@ interface FormData {
   icNumber: string;
   email: string;
   phone: string;
-  agreement: boolean;
   customerAgreement: boolean;
   dealerEmail?: string;
 }
@@ -44,7 +43,6 @@ export default function NewPage() {
     icNumber: '',
     email: '',
     phone: '',
-    agreement: false,
     customerAgreement: false,
     dealerEmail: ''
   });
@@ -89,7 +87,7 @@ export default function NewPage() {
         const response = await fetch('/api/get-dealer-info');
         if (response.ok) {
           const data = await response.json();
-          console.log("data", data);
+          // console.log("data", data);
           setDealerInfo(data);
         }
       } catch (error) {
@@ -119,11 +117,6 @@ export default function NewPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.agreement || !formData.customerAgreement) {
-      alert('Sila tandakan kedua-dua persetujuan untuk meneruskan.');
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
@@ -147,7 +140,6 @@ export default function NewPage() {
           icNumber: '',
           email: '',
           phone: '',
-          agreement: false,
           customerAgreement: false,
           dealerEmail: dealerInfo.email || ''
         });
@@ -909,19 +901,6 @@ export default function NewPage() {
 
                       {/* Agreement */}
                       <div className="space-y-4">
-                        <div className="flex items-start">
-                          <input
-                            type="checkbox"
-                            id="agreement"
-                            required
-                            checked={formData.agreement}
-                            onChange={(e) => handleInputChange('agreement', e.target.checked)}
-                            className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                          />
-                          <label htmlFor="agreement" className="ml-2 text-sm text-gray-700">
-                            Persetujuan (sila tick untuk meneruskan pendaftaran)*
-                          </label>
-                        </div>
 
                         <div className="flex items-start">
                           <input
@@ -967,7 +946,7 @@ export default function NewPage() {
               <div className="bg-white rounded-t-2xl shadow-xl max-h-[90vh] flex flex-col">
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">Daftar Akaun GAP</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">Daftar Akaun Public Gold</h2>
                   <button
                     onClick={closeDrawer}
                     className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -1060,19 +1039,6 @@ export default function NewPage() {
 
                     {/* Agreement */}
                     <div className="space-y-4">
-                      <div className="flex items-start">
-                        <input
-                          type="checkbox"
-                          id="agreementMobile"
-                          required
-                          checked={formData.agreement}
-                          onChange={(e) => handleInputChange('agreement', e.target.checked)}
-                          className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                        />
-                        <label htmlFor="agreementMobile" className="ml-2 text-sm text-gray-700">
-                          Persetujuan (sila tick untuk meneruskan pendaftaran)*
-                        </label>
-                      </div>
 
                       <div className="flex items-start">
                         <input
