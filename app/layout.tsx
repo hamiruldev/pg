@@ -22,8 +22,8 @@ export const metadata: Metadata = {
   keywords: "Publicgold, Publigoldofficial, PG Mall, PG Jewel, Aurora Italia, Emas, GAP, EPP, public gold, public gold malaysia, public gold indonesia, public gold brunei, public gold ampang, public gold bangi, public gold sunway, emas, emas public gold, dinar, gold bar, gold bars, gap, public gold gap",
   openGraph: {
     title: "Public Gold Malaysia - All prices are quoted in Malaysia Ringgit (MYR) and excluding Gold Premium",
-    images: ["https://publicgoldofficial.com/img/shariah.jpg"],
-    url: "https://publicgoldofficial.com/image/kelebihan/kelebihan11.jpg",
+    images: ["/syariah1.png"],
+    url: "/image-gold.png",
     type: "article",
     description: "All prices are quoted in Malaysia Ringgit (MYR) and excluding Gold Premium",
   },
