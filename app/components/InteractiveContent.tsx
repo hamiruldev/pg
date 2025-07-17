@@ -13,7 +13,7 @@ export default function InteractiveContent({ pageContent, dealerUrl }: Interacti
   // Set document title after hydration and content load
   useEffect(() => {
     if (isHydrated && dealerUrl) {
-      document.title = `Public Gold Official | ${dealerUrl}`;
+      document.title = `Public Gold | ${dealerUrl}`;
     }
   }, [isHydrated, dealerUrl]);
 
