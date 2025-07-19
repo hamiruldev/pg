@@ -81,6 +81,12 @@ export default function NewPage() {
     updateDealerIndex();
   }, []);
 
+  // Set document title with dealer URL
+  useEffect(() => {
+    const dealerUrl = dealerInfo.username || 'default';
+    document.title = `Public Gold | ${dealerUrl}`;
+  }, [dealerInfo.username]);
+
   useEffect(() => {
     const fetchDealerInfo = async () => {
       try {
