@@ -112,7 +112,7 @@ export default function NewPage() {
 
           // rotate data sequence randomly
           const shuffledData = data.sort(() => Math.random() - 0.5);
-          console.log('🔄 Shuffled data:--->', shuffledData);
+          // console.log('🔄 Shuffled data:--->', shuffledData);
           setAllAgents(shuffledData);
 
           if (shuffledData.every((agent: any) => agent.lead_email === true)) {
@@ -2153,14 +2153,14 @@ export default function NewPage() {
               <div className="bg-blue-900 border-4 border-yellow-400 rounded-2xl p-6 md:p-8 text-center text-white shadow-2xl">
                 
                 {/* Desktop Layout - Two Column */}
-                <div className="hidden md:flex md:flex-row md:items-start md:space-x-8">
+                <div className="hidden md:flex md:flex-row md:items-center md:space-x-8">
                   
                   {/* Left Column - Header and Image */}
                   <div className="flex-1 flex flex-col items-center">
                     {/* Header */}
                     <div className="mb-6">
                       <h3 className="text-3xl font-bold mb-3 text-yellow-400">Daftar Akaun GAP</h3>
-                      <h4 className="text-xl font-semibold mb-4">Public Gold</h4>
+                      <h4 className="text-xl font-semibold mb-1">Public Gold</h4>
                       <div className="w-32 h-1 bg-gradient-to-r from-yellow-400 to-yellow-300 mx-auto rounded-full"></div>
                     </div>
 
@@ -2230,7 +2230,7 @@ export default function NewPage() {
                     <img
                       alt="Public Gold App"
                       src="/apps-pg.jpeg"
-                      className="sm:w-full md:w-1/2 max-w-xs h-auto object-cover rounded-xl mx-auto shadow-lg border-2 border-yellow-400"
+                      className="w-[80%] md:w-1/2 max-w-xs h-auto object-cover rounded-xl mx-auto shadow-lg border-2 border-yellow-400"
                     />
                   </div>
 
