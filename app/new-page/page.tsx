@@ -91,6 +91,8 @@ export default function NewPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<{ x: number, y: number } | null>(null);
   const [imgOffset, setImgOffset] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isPopupClosing, setIsPopupClosing] = useState(false);
 
   // Carousel image arrays
   const testimoniImages = Array.from({ length: 8 }, (_, i) => `/testimoni/image copy ${i}.png`);
@@ -107,9 +109,13 @@ export default function NewPage() {
         if (response.ok) {
           const data = await response.json();
           //console.log('🔄 All agents fetched:--->', data);
-          setAllAgents(data);
 
-          if(data.every((agent: any) => agent.lead_email === true)) {
+          // rotate data sequence randomly
+          const shuffledData = data.sort(() => Math.random() - 0.5);
+          console.log('🔄 Shuffled data:--->', shuffledData);
+          setAllAgents(shuffledData);
+
+          if (shuffledData.every((agent: any) => agent.lead_email === true)) {
             console.log('🔄 All agents have lead_email: true, resetting all dealers lead_email to false');
             setAllDealersLeadEmailFalse();
           }
@@ -176,7 +182,7 @@ export default function NewPage() {
       return availableDealer;
     } else {
       console.log('🔄 No available dealers found, all have lead_email: true. Automatically triggering reset...');
-      
+
       // Log current state for debugging
       console.log('📊 Current agents state before auto-reset:', allAgents.map(agent => ({
         username: agent.username,
@@ -187,13 +193,13 @@ export default function NewPage() {
       // Automatically trigger the reset using the existing function
       console.log('🔄 Auto-triggering resetAllDealersLeadStatus...');
       const resetSuccess = await resetAllDealersLeadStatus();
-      
+
       if (resetSuccess) {
         console.log('✅ Auto-reset successful, searching for available dealer...');
-        
+
         // Wait a moment for the database to settle
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         // After the reset, try to find an available dealer again
         console.log('🔄 Searching for available dealer after auto-reset...');
         const freshResponse = await fetch('/api/get-all-agents');
@@ -204,7 +210,7 @@ export default function NewPage() {
           // Update local state with fresh data
           setAllAgents(freshData);
           setFilteredAgents(freshData);
-          
+
           // Find available dealer from fresh data
           const freshAvailableDealer = freshData.find((agent: any) => !agent.lead_email);
           if (freshAvailableDealer) {
@@ -276,7 +282,7 @@ export default function NewPage() {
         // Find the first available dealer without calling findNextAvailableDealerSync
         // to avoid infinite loops
         const availableDealer = allAgents.find(agent => !agent.lead_email);
-        
+
         if (availableDealer) {
           console.log('Setting next available dealer:', availableDealer.username, 'Email:', availableDealer.email, 'Lead status:', availableDealer.lead_email);
           setDealerInfo({
@@ -290,7 +296,7 @@ export default function NewPage() {
         }
       }
     };
-    
+
     updateDealerInfo();
   }, [allAgents, isAgentsLoading]); // Removed findNextAvailableDealerSync to prevent infinite loops
 
@@ -381,7 +387,7 @@ export default function NewPage() {
     // Simulate 3 rotations
     for (let i = 0; i < 3; i++) {
       console.log(`\n--- Rotation ${i + 1} ---`);
-      
+
       // Mark current dealer as completed
       currentAgents = currentAgents.map(agent =>
         agent.email === currentDealer.email
@@ -406,24 +412,24 @@ export default function NewPage() {
   // Function to manually trigger dealer rotation reset
   const triggerDealerRotationReset = async () => {
     console.log('=== Manually Triggering Dealer Rotation Reset ===');
-    
+
     try {
       // Check current state
       const currentStatus = getCurrentRotationStatus();
       console.log('📊 Current status before reset:', currentStatus);
-      
+
       if (currentStatus.available > 0) {
         console.log('⚠️ Reset not needed - there are still available dealers');
         return;
       }
-      
+
       // Trigger the reset process
       console.log('🔄 Triggering reset process...');
       const nextDealer = await findNextAvailableDealerSync();
-      
+
       if (nextDealer) {
         console.log(`✅ Reset successful! Next dealer: ${nextDealer.username} (${nextDealer.email})`);
-        
+
         // Update dealer info
         setDealerInfo({
           username: nextDealer.username,
@@ -431,7 +437,7 @@ export default function NewPage() {
           image_url: nextDealer.image_url,
           email: nextDealer.email
         });
-        
+
         // Log new status
         const newStatus = getCurrentRotationStatus();
         console.log('📊 New status after reset:', newStatus);
@@ -441,29 +447,29 @@ export default function NewPage() {
     } catch (error) {
       console.error('❌ Error during manual reset:', error);
     }
-    
+
     console.log('=== Manual Reset Complete ===');
   };
 
   // Function to manually set all dealer lead_email to false
   const setAllDealersLeadEmailFalse = async () => {
     console.log('=== Manually Setting All Dealers Lead Email to False ===');
-    
+
     try {
       // Check current state
       const currentStatus = getCurrentRotationStatus();
       console.log('📊 Current status before setting all to false:', currentStatus);
-      
+
       // Call the reset API to set all dealers to false
       console.log('🔄 Calling reset API to set all dealers to false...');
       const resetSuccess = await resetAllDealersLeadStatus();
-      
+
       if (resetSuccess) {
         console.log('✅ Reset API successful, refreshing agents...');
-        
+
         // Wait a moment for the database to settle
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // Refresh the agents list
         const response = await fetch('/api/get-all-agents');
         if (response.ok) {
@@ -471,12 +477,12 @@ export default function NewPage() {
           setAllAgents(data);
           setFilteredAgents(data);
           console.log('✅ Agents refreshed after setting all to false:', data);
-          
+
           // Verify the change
           const completedCount = data.filter((agent: any) => agent.lead_email === true).length;
           if (completedCount === 0) {
             console.log('✅ Verification successful: All dealers now have lead_email: false');
-            
+
             // Update dealer info to the first dealer
             if (data.length > 0) {
               const firstDealer = data[0];
@@ -498,19 +504,19 @@ export default function NewPage() {
     } catch (error) {
       console.error('❌ Error setting all dealers to false:', error);
     }
-    
+
     console.log('=== Set All Dealers to False Complete ===');
   };
 
   // Function to use bulk update method (PUT) for better performance
   const bulkUpdateAllDealers = async () => {
     console.log('=== Bulk Updating All Dealers Lead Email to False ===');
-    
+
     try {
       // Check current state
       const currentStatus = getCurrentRotationStatus();
       console.log('📊 Current status before bulk update:', currentStatus);
-      
+
       // Use the PUT method for bulk updates
       console.log('🔄 Calling bulk update API (PUT method)...');
       const response = await fetch('/api/reset-all-dealers-lead-status', {
@@ -522,10 +528,10 @@ export default function NewPage() {
 
       if (result.success) {
         console.log('✅ Bulk update successful:', result.message);
-        
+
         // Wait a moment for the database to settle
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         // Refresh the agents list
         const refreshResponse = await fetch('/api/get-all-agents');
         if (refreshResponse.ok) {
@@ -533,12 +539,12 @@ export default function NewPage() {
           setAllAgents(data);
           setFilteredAgents(data);
           console.log('✅ Agents refreshed after bulk update:', data);
-          
+
           // Verify the change
           const completedCount = data.filter((agent: any) => agent.lead_email === true).length;
           if (completedCount === 0) {
             console.log('✅ Verification successful: All dealers now have lead_email: false');
-            
+
             // Update dealer info to the first dealer
             if (data.length > 0) {
               const firstDealer = data[0];
@@ -566,7 +572,7 @@ export default function NewPage() {
       console.log('🔄 Falling back to regular reset method...');
       await setAllDealersLeadEmailFalse();
     }
-    
+
     console.log('=== Bulk Update Complete ===');
   };
 
@@ -695,6 +701,15 @@ export default function NewPage() {
     }, 300);
   };
 
+  // Handle popup close with animation
+  const closePopup = () => {
+    setIsPopupClosing(true);
+    setTimeout(() => {
+      setIsPopupOpen(false);
+      setIsPopupClosing(false);
+    }, 500);
+  };
+
   // Handle Kenapa drawer open
   const openKenapaDrawer = () => {
     setIsKenapaDrawerOpen(true);
@@ -770,6 +785,15 @@ export default function NewPage() {
       if (touchStartX - touchEndX > 50) handleNext();
     }
   };
+
+  // Auto-show popup after 30 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPopupOpen(true);
+    }, 10000); // 30 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const closeImageDialog = () => {
     setIsImageDialogOpen(false);
@@ -1115,7 +1139,7 @@ export default function NewPage() {
                 <button
                   onClick={async () => {
                     console.log('🧪 Testing reset process step by step...');
-                    
+
                     // Step 1: Check current state
                     console.log('Step 1: Checking current state...');
                     const currentResponse = await fetch('/api/get-all-agents');
@@ -1123,17 +1147,17 @@ export default function NewPage() {
                       const currentData = await currentResponse.json();
                       const completedCount = currentData.filter((agent: any) => agent.lead_email === true).length;
                       console.log(`📊 Current state: ${completedCount}/${currentData.length} dealers completed`);
-                      
+
                       if (completedCount === currentData.length) {
                         console.log('✅ All dealers completed, proceeding with reset...');
-                        
+
                         // Step 2: Call reset
                         console.log('Step 2: Calling reset...');
                         const resetSuccess = await resetAllDealersLeadStatus();
-                        
+
                         if (resetSuccess) {
                           console.log('✅ Reset successful, checking updated state...');
-                          
+
                           // Step 3: Verify reset
                           console.log('Step 3: Verifying reset...');
                           const verifyResponse = await fetch('/api/get-all-agents');
@@ -1141,7 +1165,7 @@ export default function NewPage() {
                             const verifyData = await verifyResponse.json();
                             const verifyCompletedCount = verifyData.filter((agent: any) => agent.lead_email === true).length;
                             console.log(`📊 After reset: ${verifyCompletedCount}/${verifyData.length} dealers completed`);
-                            
+
                             if (verifyCompletedCount === 0) {
                               console.log('✅ Reset verification successful!');
                             } else {
@@ -1200,7 +1224,7 @@ export default function NewPage() {
             <img
               src="/gold-background.png"
               alt="Gold Background"
-              className="my-10 object-cover z-0 mx-auto w-full h-80 sm:w-full sm:h-full md:w-[50vw] md:h-[70vh] rounded-xl"
+              className="my-10 object-cover z-0 mx-auto w-full h-90 sm:w-full sm:h-full md:w-[50vw] md:h-[70vh] rounded-xl"
               style={{ maxWidth: '100%', maxHeight: '100%' }}
             />
           </div>
@@ -2121,6 +2145,147 @@ export default function NewPage() {
           </div>
         </div>
       )}
+
+             {/* Registration Popup */}
+        {isPopupOpen && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 transition-all duration-500 ease-out p-4">
+            <div className={`relative w-full max-w-4xl mx-auto ${isPopupClosing ? 'animate-slideUp' : 'animate-slideDown'}`}>
+              <div className="bg-blue-900 border-4 border-yellow-400 rounded-2xl p-6 md:p-8 text-center text-white shadow-2xl">
+                
+                {/* Desktop Layout - Two Column */}
+                <div className="hidden md:flex md:flex-row md:items-start md:space-x-8">
+                  
+                  {/* Left Column - Header and Image */}
+                  <div className="flex-1 flex flex-col items-center">
+                    {/* Header */}
+                    <div className="mb-6">
+                      <h3 className="text-3xl font-bold mb-3 text-yellow-400">Daftar Akaun GAP</h3>
+                      <h4 className="text-xl font-semibold mb-4">Public Gold</h4>
+                      <div className="w-32 h-1 bg-gradient-to-r from-yellow-400 to-yellow-300 mx-auto rounded-full"></div>
+                    </div>
+
+                    {/* Image Container */}
+                    <div className="mb-6">
+                      <img
+                        alt="Public Gold App"
+                        src="/apps-pg.jpeg"
+                        className="w-full max-w-sm h-auto object-cover rounded-xl shadow-lg border-2 border-yellow-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Right Column - Content */}
+                  <div className="flex-1 flex flex-col justify-center">
+                    {/* FREE Text */}
+                    <div className="mb-8">
+                      <span className="text-5xl font-bold text-yellow-400 drop-shadow-lg">DAFTAR FREE</span>
+                    </div>
+
+                    {/* Description */}
+                    <div className="mb-8">
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
+                          <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                          <p className="text-lg font-medium">Patuh Syariah</p>
+                        </div>
+                        <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
+                          <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                          <p className="text-lg font-medium">Tak ada cas bulanan</p>
+                        </div>
+                        <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
+                          <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                          <p className="text-lg font-medium">Tak wajib beli setiap bulan</p>
+                        </div>
+                        <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
+                          <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                          <p className="text-lg font-medium">Ikut Budget sendiri (min RM100)</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* DAFTAR Button */}
+                    <button
+                      onClick={() => {
+                        closePopup();
+                        openDrawer();
+                      }}
+                      className="w-full bg-white bg-gradient-to-r from-yellow-400 to-yellow-300 text-blue-900 font-bold py-4 px-8 rounded-xl border-2 border-yellow-400 hover:from-yellow-300 hover:to-yellow-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl text-xl"
+                    >
+                      DAFTAR SEKARANG
+                    </button>
+                  </div>
+                </div>
+
+                {/* Mobile Layout - Single Column */}
+                <div className="md:hidden">
+                  {/* Header */}
+                  <div className="mb-6">
+                    <h3 className="text-2xl font-bold mb-3 text-yellow-400">Daftar Akaun GAP</h3>
+                    <h4 className="text-lg font-semibold mb-4">Public Gold</h4>
+                    <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-300 mx-auto rounded-full"></div>
+                  </div>
+
+                  {/* Image Container */}
+                  <div className="mb-6">
+                    <img
+                      alt="Public Gold App"
+                      src="/apps-pg.jpeg"
+                      className="sm:w-full md:w-1/2 max-w-xs h-auto object-cover rounded-xl mx-auto shadow-lg border-2 border-yellow-400"
+                    />
+                  </div>
+
+                  {/* FREE Text */}
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold text-yellow-400 drop-shadow-lg">DAFTAR FREE</span>
+                  </div>
+
+                  {/* Description */}
+                  <div className="mb-6 space-y-3">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-start space-x-3 bg-blue-800 bg-opacity-50 rounded-lg p-3 border border-yellow-400">
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                        <p className="text-base font-medium">Patuh Syariah</p>
+                      </div>
+                      <div className="flex items-center justify-start space-x-3 bg-blue-800 bg-opacity-50 rounded-lg p-3 border border-yellow-400">
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                        <p className="text-base font-medium">Tak ada cas bulanan</p>
+                      </div>
+                      <div className="flex items-center justify-start space-x-3 bg-blue-800 bg-opacity-50 rounded-lg p-3 border border-yellow-400">
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                        <p className="text-base font-medium">Tak wajib beli setiap bulan</p>
+                      </div>
+                      <div className="flex items-center justify-start space-x-3 bg-blue-800 bg-opacity-50 rounded-lg p-3 border border-yellow-400">
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                        <p className="text-base font-medium">Ikut Budget sendiri (min RM100)</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* DAFTAR Button */}
+                  <button
+                    onClick={() => {
+                      closePopup();
+                      openDrawer();
+                    }}
+                    className="w-full bg-white text-blue-900 font-bold py-3 px-6 rounded-xl border-2 border-yellow-400 hover:from-yellow-300 hover:to-yellow-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl text-lg"
+                  >
+                    DAFTAR SEKARANG
+                  </button>
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={closePopup}
+                className="absolute -top-4 -right-4 md:-top-6 md:-right-6 bg-red-500 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-red-600 transition-all duration-200 shadow-lg hover:scale-110"
+              >
+                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
 
       {/* Image Dialog Overlay */}
       {isImageDialogOpen && (
