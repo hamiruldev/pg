@@ -109,13 +109,10 @@ export default function NewPage() {
         if (response.ok) {
           const data = await response.json();
           //console.log('🔄 All agents fetched:--->', data);
+      
+          setAllAgents(data);
 
-          // rotate data sequence randomly
-          const shuffledData = data.sort(() => Math.random() - 0.5);
-          // console.log('🔄 Shuffled data:--->', shuffledData);
-          setAllAgents(shuffledData);
-
-          if (shuffledData.every((agent: any) => agent.lead_email === true)) {
+          if (data.every((agent: any) => agent.lead_email === true)) {
             console.log('🔄 All agents have lead_email: true, resetting all dealers lead_email to false');
             setAllDealersLeadEmailFalse();
           }
@@ -1523,7 +1520,7 @@ export default function NewPage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8">
-                    {filteredAgents.map((agent, index) => (
+                    {filteredAgents.sort(() => Math.random() - 0.5).map((agent, index) => (
                       <div
                         key={index}
                         className="bg-gradient-to-br from-white to-amber-50 rounded-xl p-6 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border border-amber-100 hover:border-amber-200"
@@ -1688,7 +1685,7 @@ export default function NewPage() {
                           required
                           value={formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                           placeholder="contoh@email.com"
                         />
                       </div>
