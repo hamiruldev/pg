@@ -1014,7 +1014,7 @@ export default function NewPage() {
           />
           <div className="absolute inset-0 bg-black bg-opacity-50 z-10" />
           <div className="relative z-20 text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-1 leading-tight drop-shadow-lg">
               SIMPAN EMAS SERENDAH{' '}
               <span className="text-red-600">RM100</span>
             </h1>
@@ -2219,9 +2219,9 @@ export default function NewPage() {
                 {/* Mobile Layout - Single Column */}
                 <div className="md:hidden">
                   {/* Header */}
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold mb-3 text-yellow-400">Daftar Akaun GAP</h3>
-                    <h4 className="text-lg font-semibold mb-4">Public Gold</h4>
+                  <div className="mb-1">
+                    <h3 className="text-2xl font-bold mb-1 text-yellow-400">Daftar Akaun GAP</h3>
+                    <h4 className="text-lg font-semibold mb-1">Public Gold</h4>
                     <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-300 mx-auto rounded-full"></div>
                   </div>
 
@@ -2235,28 +2235,24 @@ export default function NewPage() {
                   </div>
 
                   {/* FREE Text */}
-                  <div className="mb-6">
+                  <div className="mb-3">
                     <span className="text-4xl font-bold text-yellow-400 drop-shadow-lg">DAFTAR FREE</span>
                   </div>
 
                   {/* Description */}
                   <div className="mb-6 space-y-3">
                     <div className="space-y-3">
-                      <div className="flex items-center justify-start space-x-3 bg-blue-800 bg-opacity-50 rounded-lg p-3 border border-yellow-400">
-                        <div className="w-3 h-3 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                        <p className="text-base font-medium">Patuh Syariah</p>
+                      <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
+                        <p className="text-base font-medium">- Patuh Syariah</p>
                       </div>
-                      <div className="flex items-center justify-start space-x-3 bg-blue-800 bg-opacity-50 rounded-lg p-3 border border-yellow-400">
-                        <div className="w-3 h-3 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                        <p className="text-base font-medium">Tak ada cas bulanan</p>
+                      <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
+                        <p className="text-base font-medium">- Tak ada cas bulanan</p>
                       </div>
-                      <div className="flex items-center justify-start space-x-3 bg-blue-800 bg-opacity-50 rounded-lg p-3 border border-yellow-400">
-                        <div className="w-3 h-3 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                        <p className="text-base font-medium">Tak wajib beli setiap bulan</p>
+                      <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
+                        <p className="text-base font-medium">- Tak wajib beli setiap bulan</p>
                       </div>
-                      <div className="flex items-center justify-start space-x-3 bg-blue-800 bg-opacity-50 rounded-lg p-3 border border-yellow-400">
-                        <div className="w-3 h-3 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                        <p className="text-base font-medium">Ikut Budget sendiri (min RM100)</p>
+                      <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
+                        <p className="text-base font-medium">- Ikut Budget sendiri (min RM100)</p>
                       </div>
                     </div>
                   </div>
