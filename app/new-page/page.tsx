@@ -2190,15 +2190,15 @@ export default function NewPage() {
                         </div>
                         <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
                           <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                          <p className="text-lg font-medium">Tak ada cas bulanan</p>
+                          <p className="text-lg font-medium">Tiada cas bulanan</p>
                         </div>
                         <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
                           <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                          <p className="text-lg font-medium">Tak wajib beli setiap bulan</p>
+                          <p className="text-lg font-medium">Tidak wajib beli setiap bulan</p>
                         </div>
                         <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
                           <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                          <p className="text-lg font-medium">Ikut Budget sendiri (min RM100)</p>
+                          <p className="text-lg font-medium">Menabung emas ikut bajet sendiri (min RM100)</p>
                         </div>
                       </div>
                     </div>
