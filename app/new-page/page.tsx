@@ -2246,13 +2246,13 @@ export default function NewPage() {
                         <p className="text-base font-medium">- Patuh Syariah</p>
                       </div>
                       <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
-                        <p className="text-base font-medium">- Tak ada cas bulanan</p>
+                        <p className="text-base font-medium">- Tiada cas bulanan</p>
                       </div>
                       <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
-                        <p className="text-base font-medium">- Tak wajib beli setiap bulan</p>
+                        <p className="text-base font-medium">- Tidak wajib beli setiap bulan</p>
                       </div>
                       <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
-                        <p className="text-base font-medium">- Ikut Budget sendiri (min RM100)</p>
+                        <p className="text-base font-medium">- Menabung emas ikut bajet sendiri (min RM100)</p>
                       </div>
                     </div>
                   </div>
