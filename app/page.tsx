@@ -1936,7 +1936,7 @@ export default function NewPage() {
                         value={formData.icNumber}
                         onChange={(e) => handleInputChange('icNumber', e.target.value.replace(/\D/g, ''))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                        placeholder="Contoh: 880101-01-1234"
+                        placeholder="Contoh: 880101011234"
                         onInput={e => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ''))}
                       />
                     </div>
@@ -1969,7 +1969,7 @@ export default function NewPage() {
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value.replace(/\D/g, ''))}
                         className="w-full px-3 py-2 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
-                        placeholder="Contoh: 012-3456789"
+                        placeholder="Contoh: 0123456789"
                         onInput={e => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ''))}
                       />
                     </div>
