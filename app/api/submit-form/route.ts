@@ -23,7 +23,15 @@ export async function POST(req: Request) {
       from: process.env.GMAIL_USER,
       to: toEmail,
       subject: 'New GAP Registration',
-      text: `New registration received:\n\n${JSON.stringify(formData, null, 2)}`,
+      text: `New registration received:
+
+Name: ${formData.fullName}
+Email: ${formData.email}
+IC: ${formData.icNumber}
+Phone: +${formData.phone}
+
+Customer form --------------------------------->
+Location: ${formData.location}`,
     };
 
     await transporter.sendMail(mailOptions);
