@@ -56,6 +56,7 @@ interface FormData {
   icNumber: string;
   email: string;
   phone: string;
+  location: string;
   customerAgreement: boolean;
   dealerEmail?: string;
 }
@@ -82,6 +83,7 @@ export default function NewPage() {
     icNumber: '',
     email: '',
     phone: '',
+    location: '',
     customerAgreement: false,
     dealerEmail: ''
   });
@@ -93,6 +95,7 @@ export default function NewPage() {
   const [imgOffset, setImgOffset] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isPopupClosing, setIsPopupClosing] = useState(false);
+  const [isLocationLoading, setIsLocationLoading] = useState(false);
 
   // Carousel image arrays
   const testimoniImages = Array.from({ length: 8 }, (_, i) => `/testimoni/image copy ${i}.png`);
@@ -109,7 +112,7 @@ export default function NewPage() {
         if (response.ok) {
           const data = await response.json();
           //console.log('🔄 All agents fetched:--->', data);
-      
+
           setAllAgents(data);
 
           if (data.every((agent: any) => agent.lead_email === true)) {
@@ -581,6 +584,85 @@ export default function NewPage() {
     }));
   };
 
+  // Handle location permission and get coordinates
+  const handleLocationClick = async () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by this browser.');
+      return;
+    }
+
+    setIsLocationLoading(true);
+
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          {
+            enableHighAccuracy: true,
+            timeout: 15000, // Increased timeout
+            maximumAge: 300000 // 5 minutes cache
+          }
+        );
+      });
+
+      const { latitude, longitude } = position.coords;
+
+      // Try to get address from coordinates using reverse geocoding
+      try {
+        const response = await fetch(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+        );
+
+        if (!response.ok) {
+          throw new Error('Reverse geocoding failed');
+        }
+
+        const data = await response.json();
+
+        if (data.city && data.principalSubdivision) {
+          const locationString = `${data.city}, ${data.principalSubdivision}, ${data.countryName}`;
+          handleInputChange('location', locationString);
+        } else {
+          handleInputChange('location', `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+        }
+      } catch (error) {
+        console.warn('Reverse geocoding failed, using coordinates:', error);
+        // Fallback to coordinates if reverse geocoding fails
+        handleInputChange('location', `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+      }
+    } catch (error) {
+      console.error('Location error:', error);
+
+      if (error instanceof GeolocationPositionError) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert('Location access denied. Please enable location permissions in your browser settings and try again.');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert('Location information is unavailable. Please check your device location settings and try again.');
+            break;
+          case error.TIMEOUT:
+            alert('Location request timed out. Please try again or check your internet connection.');
+            break;
+          default:
+            alert('Unable to get your location. Please try again or enter your location manually.');
+            break;
+        }
+      } else {
+        alert('An error occurred while retrieving location. Please try again or enter your location manually.');
+      }
+
+      // Allow manual entry if location fails
+      const manualLocation = prompt('Please enter your location manually:');
+      if (manualLocation && manualLocation.trim()) {
+        handleInputChange('location', manualLocation.trim());
+      }
+    } finally {
+      setIsLocationLoading(false);
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -659,6 +741,7 @@ export default function NewPage() {
           icNumber: '',
           email: '',
           phone: '',
+          location: '',
           customerAgreement: false,
           dealerEmail: nextDealer?.email || ''
         });
@@ -1709,6 +1792,42 @@ export default function NewPage() {
                         />
                       </div>
 
+                      {/* Location */}
+                      <div>
+                        <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+                          Lokasi*
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            id="location"
+                            required
+                            value={formData.location}
+                            onChange={(e) => handleInputChange('location', e.target.value)}
+                            onClick={handleLocationClick}
+                            className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg text-black focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors cursor-pointer"
+                            placeholder={isLocationLoading ? "Mendapatkan lokasi..." : "Klik untuk dapatkan lokasi anda atau taip secara manual"}
+                            disabled={isLocationLoading}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleLocationClick}
+                            disabled={isLocationLoading}
+                            className="absolute pt-1 h-full right-2 top-[40px] transform -translate-y-1/2 p-1 text-gray-500 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Dapatkan lokasi semasa"
+                          >
+                            {isLocationLoading ? (
+                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
+                            ) : (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
                       {/* Agreement */}
                       <div className="space-y-4">
 
@@ -1845,6 +1964,42 @@ export default function NewPage() {
                         placeholder="Contoh: 012-3456789"
                         onInput={e => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ''))}
                       />
+                    </div>
+
+                    {/* Location */}
+                    <div>
+                      <label htmlFor="locationMobile" className="block text-sm font-medium text-gray-700 mb-2">
+                        Lokasi*
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          id="locationMobile"
+                          required
+                          value={formData.location}
+                          onChange={(e) => handleInputChange('location', e.target.value)}
+                          onClick={handleLocationClick}
+                          className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg text-black focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors cursor-pointer"
+                          placeholder={isLocationLoading ? "Mendapatkan lokasi..." : "Klik untuk dapatkan lokasi anda atau taip secara manual"}
+                          disabled={isLocationLoading}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleLocationClick}
+                          disabled={isLocationLoading}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Dapatkan lokasi semasa"
+                        >
+                          {isLocationLoading ? (
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                     </div>
 
                     {/* Agreement */}
@@ -2143,83 +2298,22 @@ export default function NewPage() {
         </div>
       )}
 
-             {/* Registration Popup */}
-        {isPopupOpen && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 transition-all duration-500 ease-out p-4">
-            <div className={`relative w-full max-w-4xl mx-auto ${isPopupClosing ? 'animate-slideUp' : 'animate-slideDown'}`}>
-              <div className="bg-blue-900 border-4 border-yellow-400 rounded-2xl p-6 md:p-8 text-center text-white shadow-2xl">
-                
-                {/* Desktop Layout - Two Column */}
-                <div className="hidden md:flex md:flex-row md:items-center md:space-x-8">
-                  
-                  {/* Left Column - Header and Image */}
-                  <div className="flex-1 flex flex-col items-center">
-                    {/* Header */}
-                    <div className="mb-6">
-                      <h3 className="text-3xl font-bold mb-3 text-yellow-400">Daftar Akaun GAP</h3>
-                      <h4 className="text-xl font-semibold mb-1">Public Gold</h4>
-                      <div className="w-32 h-1 bg-gradient-to-r from-yellow-400 to-yellow-300 mx-auto rounded-full"></div>
-                    </div>
+      {/* Registration Popup */}
+      {isPopupOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50 transition-all duration-500 ease-out p-4">
+          <div className={`relative w-full max-w-4xl mx-auto ${isPopupClosing ? 'animate-slideUp' : 'animate-slideDown'}`}>
+            <div className="bg-blue-900 border-4 border-yellow-400 rounded-2xl p-6 md:p-8 text-center text-white shadow-2xl">
 
-                    {/* Image Container */}
-                    <div className="mb-6">
-                      <img
-                        alt="Public Gold App"
-                        src="/apps-pg.jpeg"
-                        className="w-full max-w-sm h-auto object-cover rounded-xl shadow-lg border-2 border-yellow-400"
-                      />
-                    </div>
-                  </div>
+              {/* Desktop Layout - Two Column */}
+              <div className="hidden md:flex md:flex-row md:items-center md:space-x-8">
 
-                  {/* Right Column - Content */}
-                  <div className="flex-1 flex flex-col justify-center">
-                    {/* FREE Text */}
-                    <div className="mb-8">
-                      <span className="text-5xl font-bold text-yellow-400 drop-shadow-lg">DAFTAR FREE</span>
-                    </div>
-
-                    {/* Description */}
-                    <div className="mb-8">
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
-                          <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                          <p className="text-lg font-medium">Patuh Syariah</p>
-                        </div>
-                        <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
-                          <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                          <p className="text-lg font-medium">Tiada cas bulanan</p>
-                        </div>
-                        <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
-                          <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                          <p className="text-lg font-medium">Tidak wajib beli setiap bulan</p>
-                        </div>
-                        <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
-                          <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
-                          <p className="text-lg font-medium">Menabung emas ikut bajet sendiri (min RM100)</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* DAFTAR Button */}
-                    <button
-                      onClick={() => {
-                        closePopup();
-                        openDrawer();
-                      }}
-                      className="w-full bg-white bg-gradient-to-r from-yellow-400 to-yellow-300 text-blue-900 font-bold py-4 px-8 rounded-xl border-2 border-yellow-400 hover:from-yellow-300 hover:to-yellow-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl text-xl"
-                    >
-                      DAFTAR SEKARANG
-                    </button>
-                  </div>
-                </div>
-
-                {/* Mobile Layout - Single Column */}
-                <div className="md:hidden">
+                {/* Left Column - Header and Image */}
+                <div className="flex-1 flex flex-col items-center">
                   {/* Header */}
-                  <div className="mb-1">
-                    <h3 className="text-2xl font-bold mb-1 text-yellow-400">Daftar Akaun GAP</h3>
-                    <h4 className="text-lg font-semibold mb-1">Public Gold</h4>
-                    <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-300 mx-auto rounded-full"></div>
+                  <div className="mb-6">
+                    <h3 className="text-3xl font-bold mb-3 text-yellow-400">Daftar Akaun GAP</h3>
+                    <h4 className="text-xl font-semibold mb-1">Public Gold</h4>
+                    <div className="w-32 h-1 bg-gradient-to-r from-yellow-400 to-yellow-300 mx-auto rounded-full"></div>
                   </div>
 
                   {/* Image Container */}
@@ -2227,29 +2321,36 @@ export default function NewPage() {
                     <img
                       alt="Public Gold App"
                       src="/apps-pg.jpeg"
-                      className="w-[80%] md:w-1/2 max-w-xs h-auto object-cover rounded-xl mx-auto shadow-lg border-2 border-yellow-400"
+                      className="w-full max-w-sm h-auto object-cover rounded-xl shadow-lg border-2 border-yellow-400"
                     />
                   </div>
+                </div>
 
+                {/* Right Column - Content */}
+                <div className="flex-1 flex flex-col justify-center">
                   {/* FREE Text */}
-                  <div className="mb-3">
-                    <span className="text-4xl font-bold text-yellow-400 drop-shadow-lg">DAFTAR FREE</span>
+                  <div className="mb-8">
+                    <span className="text-5xl font-bold text-yellow-400 drop-shadow-lg">DAFTAR FREE</span>
                   </div>
 
                   {/* Description */}
-                  <div className="mb-6 space-y-3">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
-                        <p className="text-base font-medium">- Patuh Syariah</p>
+                  <div className="mb-8">
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
+                        <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                        <p className="text-lg font-medium">Patuh Syariah</p>
                       </div>
-                      <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
-                        <p className="text-base font-medium">- Tiada cas bulanan</p>
+                      <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
+                        <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                        <p className="text-lg font-medium">Tiada cas bulanan</p>
                       </div>
-                      <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
-                        <p className="text-base font-medium">- Tidak wajib beli setiap bulan</p>
+                      <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
+                        <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                        <p className="text-lg font-medium">Tidak wajib beli setiap bulan</p>
                       </div>
-                      <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
-                        <p className="text-base font-medium">- Menabung emas ikut bajet sendiri (min RM100)</p>
+                      <div className="flex items-center space-x-4 bg-blue-800 bg-opacity-50 rounded-lg p-4 border border-yellow-400">
+                        <div className="w-4 h-4 bg-yellow-400 rounded-full flex-shrink-0"></div>
+                        <p className="text-lg font-medium">Menabung emas ikut bajet sendiri (min RM100)</p>
                       </div>
                     </div>
                   </div>
@@ -2260,25 +2361,79 @@ export default function NewPage() {
                       closePopup();
                       openDrawer();
                     }}
-                    className="w-full bg-white text-blue-900 font-bold py-3 px-6 rounded-xl border-2 border-yellow-400 hover:from-yellow-300 hover:to-yellow-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl text-lg"
+                    className="w-full bg-white bg-gradient-to-r from-yellow-400 to-yellow-300 text-blue-900 font-bold py-4 px-8 rounded-xl border-2 border-yellow-400 hover:from-yellow-300 hover:to-yellow-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl text-xl"
                   >
                     DAFTAR SEKARANG
                   </button>
                 </div>
               </div>
 
-              {/* Close Button */}
-              <button
-                onClick={closePopup}
-                className="absolute -top-4 -right-4 md:-top-6 md:-right-6 bg-red-500 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-red-600 transition-all duration-200 shadow-lg hover:scale-110"
-              >
-                <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              {/* Mobile Layout - Single Column */}
+              <div className="md:hidden">
+                {/* Header */}
+                <div className="mb-1">
+                  <h3 className="text-2xl font-bold mb-1 text-yellow-400">Daftar Akaun GAP</h3>
+                  <h4 className="text-lg font-semibold mb-1">Public Gold</h4>
+                  <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-300 mx-auto rounded-full"></div>
+                </div>
+
+                {/* Image Container */}
+                <div className="mb-6">
+                  <img
+                    alt="Public Gold App"
+                    src="/apps-pg.jpeg"
+                    className="w-[80%] md:w-1/2 max-w-xs h-auto object-cover rounded-xl mx-auto shadow-lg border-2 border-yellow-400"
+                  />
+                </div>
+
+                {/* FREE Text */}
+                <div className="mb-3">
+                  <span className="text-4xl font-bold text-yellow-400 drop-shadow-lg">DAFTAR FREE</span>
+                </div>
+
+                {/* Description */}
+                <div className="mb-6 space-y-3">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
+                      <p className="text-base font-medium">- Patuh Syariah</p>
+                    </div>
+                    <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
+                      <p className="text-base font-medium">- Tiada cas bulanan</p>
+                    </div>
+                    <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
+                      <p className="text-base font-medium">- Tidak wajib beli setiap bulan</p>
+                    </div>
+                    <div className="flex items-center justify-center space-x-3 bg-opacity-50 rounded-lg">
+                      <p className="text-base font-medium">- Menabung emas ikut bajet sendiri (min RM100)</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* DAFTAR Button */}
+                <button
+                  onClick={() => {
+                    closePopup();
+                    openDrawer();
+                  }}
+                  className="w-full bg-white text-blue-900 font-bold py-3 px-6 rounded-xl border-2 border-yellow-400 hover:from-yellow-300 hover:to-yellow-200 transition-all duration-300 transform hover:scale-105 hover:shadow-xl text-lg"
+                >
+                  DAFTAR SEKARANG
+                </button>
+              </div>
             </div>
+
+            {/* Close Button */}
+            <button
+              onClick={closePopup}
+              className="absolute -top-4 -right-4 md:-top-6 md:-right-6 bg-red-500 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-red-600 transition-all duration-200 shadow-lg hover:scale-110"
+            >
+              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-        )}
+        </div>
+      )}
 
       {/* Image Dialog Overlay */}
       {isImageDialogOpen && (
