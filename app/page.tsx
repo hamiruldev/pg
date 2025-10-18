@@ -96,6 +96,7 @@ export default function NewPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isPopupClosing, setIsPopupClosing] = useState(false);
   const [isLocationLoading, setIsLocationLoading] = useState(false);
+  const [hasShownAutoPopup, setHasShownAutoPopup] = useState(false);
 
   // Carousel image arrays
   const testimoniImages = Array.from({ length: 8 }, (_, i) => `/testimoni/image copy ${i}.png`);
@@ -654,7 +655,7 @@ export default function NewPage() {
       }
 
       // Allow manual entry if location fails
-      const manualLocation = prompt('Please enter your location manually:');
+      const manualLocation = prompt('Masukkan Daerah Anda:');
       if (manualLocation && manualLocation.trim()) {
         handleInputChange('location', manualLocation.trim());
       }
@@ -866,14 +867,21 @@ export default function NewPage() {
     }
   };
 
-  // Auto-show popup after 30 seconds
+  // Auto-show popup after 10 seconds (only once)
   useEffect(() => {
+    if (hasShownAutoPopup) return; // Don't show popup again if already shown
+
     const timer = setTimeout(() => {
-      setIsPopupOpen(true);
-    }, 10000); // 30 seconds
+      // Only show popup if drawer is not open and popup hasn't been shown yet
+      if (!isDrawerOpen && !hasShownAutoPopup) {
+        setIsPopupOpen(true);
+        setHasShownAutoPopup(true);
+      }
+    }, 10000); // 10 seconds
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isDrawerOpen, hasShownAutoPopup]);
+  
 
   const closeImageDialog = () => {
     setIsImageDialogOpen(false);
@@ -1987,7 +1995,7 @@ export default function NewPage() {
                           type="button"
                           onClick={handleLocationClick}
                           disabled={isLocationLoading}
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="absolute right-2 top-[40px] transform -translate-y-1/2 p-1 text-gray-500 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Dapatkan lokasi semasa"
                         >
                           {isLocationLoading ? (

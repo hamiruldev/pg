@@ -19,6 +19,15 @@ export async function POST(req: Request) {
       },
     });
 
+    // format data should l
+    // Name: John Doe
+    // Email: john.doe@example.com
+    // IC: 123456789012 ( no space no dash no dot )
+    // Phone: +60123456789 ( no space no dash no dot )
+    // Location: Kuala Lumpur, Malaysia ( no space no dash no dot )
+    // Customer form --------------------------------->
+    // Location: Kuala Lumpur, Malaysia ( no space no dash no dot )
+    
     const mailOptions = {
       from: process.env.GMAIL_USER,
       to: toEmail,
@@ -28,10 +37,12 @@ export async function POST(req: Request) {
 Name: ${formData.fullName}
 Email: ${formData.email}
 IC: ${formData.icNumber}
-Phone: +${formData.phone}
+Phone: +6${formData.phone}
 
 Customer form --------------------------------->
-Location: ${formData.location}`,
+Location: ${formData.location}
+For Dealer: ${toEmail}
+`,
     };
 
     await transporter.sendMail(mailOptions);
