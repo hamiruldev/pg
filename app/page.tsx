@@ -84,7 +84,7 @@ export default function NewPage() {
     email: '',
     phone: '',
     location: '',
-    customerAgreement: false,
+    customerAgreement: true,
     dealerEmail: ''
   });
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
@@ -586,7 +586,12 @@ export default function NewPage() {
   };
 
   // Handle location permission and get coordinates
-  const handleLocationClick = async () => {
+  const handleLocationClick = async (e?: React.MouseEvent) => {
+    // Prevent any event bubbling that might interfere with form
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!navigator.geolocation) {
       alert('Geolocation is not supported by this browser.');
       return;
@@ -743,7 +748,7 @@ export default function NewPage() {
           email: '',
           phone: '',
           location: '',
-          customerAgreement: false,
+          customerAgreement: true,
           dealerEmail: nextDealer?.email || ''
         });
       } else {
@@ -1812,9 +1817,8 @@ export default function NewPage() {
                             required
                             value={formData.location}
                             onChange={(e) => handleInputChange('location', e.target.value)}
-                            onClick={handleLocationClick}
-                            className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg text-black focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors cursor-pointer"
-                            placeholder={isLocationLoading ? "Mendapatkan lokasi..." : "Klik untuk dapatkan lokasi anda atau taip secara manual"}
+                            className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg text-black focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                            placeholder={isLocationLoading ? "Mendapatkan lokasi..." : "Klik butang lokasi atau taip secara manual"}
                             disabled={isLocationLoading}
                           />
                           <button
@@ -1986,16 +1990,15 @@ export default function NewPage() {
                           required
                           value={formData.location}
                           onChange={(e) => handleInputChange('location', e.target.value)}
-                          onClick={handleLocationClick}
-                          className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg text-black focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors cursor-pointer"
-                          placeholder={isLocationLoading ? "Mendapatkan lokasi..." : "Klik untuk dapatkan lokasi anda atau taip secara manual"}
+                          className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg text-black focus:text-black focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                          placeholder={isLocationLoading ? "Mendapatkan lokasi..." : "Klik butang lokasi atau taip secara manual"}
                           disabled={isLocationLoading}
                         />
                         <button
                           type="button"
                           onClick={handleLocationClick}
                           disabled={isLocationLoading}
-                          className="absolute right-2 top-[40px] transform -translate-y-1/2 p-1 text-gray-500 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="absolute right-2 top-[35px] transform -translate-y-1/2 p-1 text-gray-500 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Dapatkan lokasi semasa"
                         >
                           {isLocationLoading ? (
